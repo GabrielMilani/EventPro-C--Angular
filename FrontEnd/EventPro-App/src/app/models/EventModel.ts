@@ -4,12 +4,13 @@ import { SpeakerModel } from "./SpeakerModel";
 
 export interface EventModel{
   id: number;
-  local: string;
-  eventDate?: Date;
   theme: string;
-  quantityPeople: number;
+  local: string;
+  telephone: string;
   imageUrl: string;
   email: string;
+  quantityPeople: number;
+  eventDate?: Date;
   lots: LotModel[];
   socialNetworks: SocialNetworkModel[];
   speakerEvents: SpeakerModel[];

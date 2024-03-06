@@ -32,26 +32,25 @@ export class EventListComponent {
   public ngOnInit(): void
   {
     this.spinner.show();
-    this.getEvents();
+    this.LoadEvents();
   }
 
-  public getEvents(): void
+  public LoadEvents(): void
   {
-    const observ =
-    {
-      next:(EventResponse : EventModel[]) =>
+    this.spinner.show();
+    this.eventService.getEvents().subscribe(
+      (EventResponse : EventModel[]) =>
       {
         this.events = EventResponse;
         this.filteredEvents = this.events;
       },
-      error: (error: any) =>
+      (error: any) =>
       {
         this.spinner.hide();
         this.toastr.success('Load events error', 'Error!');
       },
-      complete: () => this.spinner.hide()
-     }
-    this.eventService.getEvents().subscribe(observ)
+      () => this.spinner.hide()
+    )
   }
 
   public get listFilter(): string
@@ -90,22 +89,14 @@ export class EventListComponent {
     this.spinner.show();
 
     this.eventService.deleteEvent(this.eventId).subscribe(
-      (result: any) =>
-      {
-        console.log(result);
+      (result: any) =>{
         this.toastr.success('Event deleted success', 'Deleted!');
-        this.spinner.hide();
-        this.getEvents();
+        this.LoadEvents();
       },
-      (error: any) =>
-        {
-          console.error(error);
-          this.toastr.success('Delete events error', 'Error!');
-          this.spinner.hide();
-        },
-      () => this.spinner.hide()
-     );
-    this.toastr.success('Event deleted success!', 'Deleted');
+      (error: any) =>{
+        console.error(error);
+        this.toastr.error('Delete events error', 'Error!');
+      }).add(() => this.spinner.hide());
   }
 
   public decline(): void

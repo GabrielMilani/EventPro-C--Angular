@@ -18,6 +18,7 @@ import { EventService } from '../../../services/event.service';
 export class EventDetailComponent {
   eventModel = {}  as EventModel;
   form!: FormGroup;
+  modeSave = 'post';
 
   public get f(): any
   {
@@ -50,6 +51,9 @@ export class EventDetailComponent {
 
     if(eventIdParam !== null){
       this.spinner.show();
+
+      this.modeSave = 'put';
+
       this.eventService.getEventById(+eventIdParam).subscribe(
         (eventModel: EventModel) =>
           {
@@ -78,10 +82,11 @@ export class EventDetailComponent {
     this.form = this.fb.group({
       theme: ['',[Validators.required, Validators.minLength(4), Validators.maxLength(100)]],
       local: ['', Validators.required],
+      telephone: ['', Validators.required],
       eventDate: ['', Validators.required],
-      quantityPeople: ['', [Validators.required, Validators.max(120000)]],
       email: ['', [Validators.required, Validators.email]],
       imageUrl: ['', Validators.required],
+      quantityPeople: ['', [Validators.required, Validators.max(120000)]],
     });
   }
 
@@ -100,16 +105,18 @@ export class EventDetailComponent {
     this.spinner.show();
     if(this.form.valid)
     {
-      this.eventModel = {...this.form.value};
-      this.eventService.postEvent(this.eventModel).subscribe(
-        () => this.toastr.success('Event saved success.', 'Success!'),
-        (error: any) =>
-          {
-            console.error(error)
-            this.spinner.hide();
-            this.toastr.error('Failed event insert.', 'Error!')
-          },
-        () => {this.spinner.hide()},
+      this.eventModel = (this.modeSave === 'post')
+              ? {...this.form.value}
+              : {id: this.eventModel.id, ...this.form.value};
+
+      this.eventService[this.modeSave](this.eventModel).subscribe(
+        () =>{this.toastr.success('Event saved success.', 'Success!')},
+        (error: any) =>{
+          console.error(error);
+          this.spinner.hide();
+          this.toastr.error('Failed event insert.', 'Error!');
+        },
+        () =>{this.spinner.hide()}
       );
     }
   }

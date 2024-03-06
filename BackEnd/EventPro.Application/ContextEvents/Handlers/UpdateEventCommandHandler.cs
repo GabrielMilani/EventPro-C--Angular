@@ -24,8 +24,8 @@ public class UpdateEventCommandHandler : IRequestHandler<UpdateEventCommand, Eve
         }
         existingEvent.Update(request.Theme,
                              request.Local,
-                             request.ImageUrl,
                              request.Email,
+                             request.ImageUrl,
                              request.Telephone,
                              request.QuantityPeople, 
                              request.EventDate);

@@ -9,7 +9,7 @@ public class CreateEventCommand : IRequest<Event>
     public DateTime EventDate { get;  set; }
     public string Theme { get;  set; }
     public int QuantityPeople { get;  set; }
-    public string ImageUrl { get;  set; }
     public string Email { get;  set; }
+    public string ImageUrl { get;  set; }
     public string Telephone { get; set; }
 }

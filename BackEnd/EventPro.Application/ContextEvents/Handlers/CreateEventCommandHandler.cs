@@ -18,8 +18,8 @@ public class CreateEventCommandHandler : IRequestHandler<CreateEventCommand, Eve
     {
         var newEvent = new Event(request.Theme,
                                  request.Local,
-                                 request.ImageUrl,
                                  request.Email,
+                                 request.ImageUrl,
                                  request.Telephone,
                                  request.QuantityPeople, 
                                  request.EventDate);

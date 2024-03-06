@@ -25,7 +25,7 @@
         </div>
       </div>
       <div class="form-row">
-        <div class="form-group col-md-8">
+        <div class="form-group col-md-12">
           <label>Local</label>
           <input
             type="text"
@@ -38,7 +38,9 @@
             Local is required !
           </div>
         </div>
-        <div class="form-group col-md-4">
+      </div>
+      <div class="form-row">
+        <div class="form-group col-md-6">
           <label>Date Time</label>
           <input
             type="datetime"
@@ -52,9 +54,7 @@
             Date is required !
           </div>
         </div>
-      </div>
-      <div class="form-row">
-        <div class="form-group col-md-2">
+        <div class="form-group col-md-3">
           <label>Qtd Peoples</label>
           <input
             type="number"
@@ -73,7 +73,15 @@
             Theme must contain less than 120000 people !
           </div>
         </div>
-        <div class="form-group col-md-5">
+        <div class="form-group col-md-3">
+          <label>Telephone</label>
+          <input type="text" class="form-control" [ngClass]="cssValidator(f.telephone)"
+          formControlName="telephone" placeholder="(000) 90000-0000" [(ngModel)]="eventModel.telephone">
+          <div *ngIf="f.telephone.errors?.required && f.telephone.touched" class="invalid-feedback">
+            telephone is required.
+          </div>
+        </div>
+        <div class="form-group col-md-6">
           <label>Image</label>
           <input
             type="text"
@@ -86,7 +94,7 @@
             Image is required !
           </div>
         </div>
-        <div class="form-group col-md-5">
+        <div class="form-group col-md-6">
           <label>Email</label>
           <input
             type="text"

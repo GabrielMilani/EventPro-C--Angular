@@ -24,9 +24,9 @@ public class UpdateSpeakerCommandHandler : IRequestHandler<UpdateSpeakerCommand,
         }
         existingSpeaker.Update(request.Name,
                                 request.Description, 
-                                request.ImageUrl,
                                 request.Telephone, 
-                                request.Email);
+                                request.Email,
+                                request.ImageUrl);
         await _unitOfWork.CommitAsync();
 
         return existingSpeaker;
