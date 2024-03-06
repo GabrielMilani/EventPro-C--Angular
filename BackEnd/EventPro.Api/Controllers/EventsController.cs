@@ -1,6 +1,5 @@
-﻿using EventPro.Application.EventContext.Event.Commands;
-using EventPro.Application.EventContext.Event.Queries;
-using EventPro.Domain.EventContext.Entities;
+﻿using EventPro.Application.ContextEvents.Commands;
+using EventPro.Application.ContextEvents.Queries;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 

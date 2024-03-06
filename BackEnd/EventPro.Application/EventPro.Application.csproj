@@ -11,10 +11,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="EventContext\SocialNetwork\Queries\" />
-    <Folder Include="EventContext\Speaker\Queries\" />
-    <Folder Include="EventContext\Lot\Queries\" />
-    <Folder Include="EventContext\Event\Commands\" />
+    <Folder Include="ContextEvents\Queries\" />
+    <Folder Include="DTOs\" />
+    <Folder Include="Services\" />
   </ItemGroup>
 
   <ItemGroup>

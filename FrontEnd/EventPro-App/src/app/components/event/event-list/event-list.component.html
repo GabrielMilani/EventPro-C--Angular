@@ -71,7 +71,7 @@
             type="button"
             class="btn btn-danger btn-lg"
             tooltip="Delete"
-            (click)="openModal(template)"
+            (click)="openModal($event, template, event.id)"
           >
             <i class="fa fa-trash"></i>
           </button>
@@ -89,7 +89,7 @@
 </div>
 <ng-template #template>
   <div class="modal-body text-center">
-    <p>Do you want to confirm?</p>
+    <p>Do you want to confirm the deletion of the event {{this.eventId}} ?</p>
     <button type="button" class="btn btn-default" (click)="confirm()">
       Yes
     </button>

@@ -1,5 +1,5 @@
-﻿using EventPro.Domain.EventContext.Entities;
-using EventPro.Infrastructure.Context.EventContext.Mappings;
+﻿using EventPro.Domain.ContextEvent.Entities;
+using EventPro.Infrastructure.Context.ContextEvent.Mappings;
 using Microsoft.EntityFrameworkCore;
 
 namespace EventPro.Infrastructure.Data;
@@ -7,9 +7,7 @@ namespace EventPro.Infrastructure.Data;
 public class AppDbContext : DbContext
 {
     public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
-    {
-    }
-
+    { }
     public DbSet<Event> Events { get; set; }
     public DbSet<Speaker> Speakers { get; set; }
     public DbSet<Lot> Lots { get; set; }    
@@ -24,5 +22,4 @@ public class AppDbContext : DbContext
         builder.ApplyConfiguration(new SocialNetworkMap());
         builder.ApplyConfiguration(new SpeakerEventMap());
     }
-
 }

@@ -6,7 +6,7 @@ import { EventModel } from '../models/EventModel';
 @Injectable()
 
 export class EventService {
-  baseURL = 'http://localhost:5185/v1/events';
+  baseURL = 'http://localhost:5011/v1/events';
   constructor(private http: HttpClient) { }
 
   public getEvents() : Observable<EventModel[]>
@@ -23,4 +23,20 @@ export class EventService {
   {
     return this.http.get<EventModel>(`${this.baseURL}/${id}`)
   }
+
+  public postEvent(event: EventModel) : Observable<EventModel>
+  {
+    return this.http.post<EventModel>(this.baseURL, event);
+  }
+
+  public putEvent(id: number, event: EventModel) : Observable<EventModel>
+  {
+    return this.http.put<EventModel>(`${this.baseURL}/${id}`, event)
+  }
+
+  public deleteEvent(id: number): Observable<any>
+  {
+    return this.http.delete(`${this.baseURL}/${id}`)
+  }
+
 }

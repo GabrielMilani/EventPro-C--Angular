@@ -1,10 +1,5 @@
-﻿using EventPro.Application.EventContext.Lot.Commands;
-using EventPro.Application.EventContext.Lot.Queries;
-using EventPro.Application.EventContext.SocialNetwork.Commands;
-using EventPro.Application.EventContext.SocialNetwork.Queries;
-using EventPro.Application.EventContext.Speaker.Commands;
-using EventPro.Application.EventContext.Speaker.Queries;
-using EventPro.Domain.EventContext.Entities;
+﻿using EventPro.Application.ContextEvents.Commands;
+using EventPro.Application.ContextEvents.Queries;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
@@ -53,5 +48,5 @@ public class SpeakersController : ControllerBase
         var command = new DeleteSpeakerCommand { Id = id };
         var deletedSpeaker = await _mediator.Send(command);
         return deletedSpeaker != null ? Ok(deletedSpeaker) : NotFound("Speaker not found");
-    }      
+    }       
 }

@@ -1,10 +1,10 @@
 ﻿using System.Data;
-using EventPro.Domain.EventContext.Abstractions;
-using EventPro.Domain.SharedContext.Abstractions;
-using EventPro.Infrastructure.Context.EventContext.Repositories;
-using EventPro.Infrastructure.Context.SharedContext;
+using EventPro.Domain.ContextEvent.Abstractions;
+using EventPro.Domain.ContextShared.Abstractions;
+using EventPro.Infrastructure.Context.ContextEvent.Repositories;
+using EventPro.Infrastructure.Context.ContextShared;
 using EventPro.Infrastructure.Data;
-using Microsoft.Data.Sqlite;
+using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -18,10 +18,10 @@ public static class DependencyInjection
     {
         var connectionString = configuration.GetConnectionString("DefaultConnection");
 
-        services.AddDbContext<AppDbContext>(options => options.UseSqlite(connectionString));
+        services.AddDbContext<AppDbContext>(options => options.UseSqlServer(connectionString));
         services.AddSingleton<IDbConnection>(provider =>
         {
-            var connection = new SqliteConnection(connectionString);
+            var connection = new SqlConnection(connectionString);
             connection.Open();
             return connection;
         });   
@@ -39,5 +39,5 @@ public static class DependencyInjection
         services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblies(myHandlers));
 
         return services;
-    }
+    } 
 }

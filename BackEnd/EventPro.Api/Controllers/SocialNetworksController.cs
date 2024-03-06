@@ -1,8 +1,5 @@
-﻿using EventPro.Application.EventContext.Lot.Commands;
-using EventPro.Application.EventContext.Lot.Queries;
-using EventPro.Application.EventContext.SocialNetwork.Commands;
-using EventPro.Application.EventContext.SocialNetwork.Queries;
-using EventPro.Domain.EventContext.Entities;
+﻿using EventPro.Application.ContextEvents.Commands;
+using EventPro.Application.ContextEvents.Queries;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
@@ -51,5 +48,5 @@ public class SocialNetworksController : ControllerBase
         var command = new DeleteSocialNetworkCommand { Id = id };
         var deletedSocialNetwork = await _mediator.Send(command);
         return deletedSocialNetwork != null ? Ok(deletedSocialNetwork) : NotFound("SocialNetwork not found");
-    }   
+    }    
 }

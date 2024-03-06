@@ -3,6 +3,7 @@ using System;
 using EventPro.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -15,70 +16,88 @@ namespace EventPro.Infrastructure.Migrations
         protected override void BuildModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
-            modelBuilder.HasAnnotation("ProductVersion", "8.0.2");
+            modelBuilder
+                .HasAnnotation("ProductVersion", "8.0.2")
+                .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
-            modelBuilder.Entity("EventPro.Domain.EventContext.Entities.Event", b =>
+            SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
+
+            modelBuilder.Entity("EventPro.Domain.ContextEvent.Entities.Event", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("Email")
                         .IsRequired()
                         .HasMaxLength(150)
-                        .HasColumnType("TEXT");
+                        .HasColumnType("nvarchar(150)");
 
-                    b.Property<DateTime>("EventDate")
-                        .HasColumnType("TEXT");
+                    b.Property<DateTime?>("EventDate")
+                        .IsRequired()
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("ImageUrl")
                         .IsRequired()
                         .HasMaxLength(255)
-                        .HasColumnType("TEXT");
+                        .HasColumnType("nvarchar(255)");
 
                     b.Property<string>("Local")
                         .IsRequired()
                         .HasMaxLength(100)
-                        .HasColumnType("TEXT");
+                        .HasColumnType("nvarchar(100)");
 
-                    b.Property<int>("QuantityPeople")
-                        .HasColumnType("INTEGER");
+                    b.Property<int?>("QuantityPeople")
+                        .IsRequired()
+                        .HasColumnType("int");
+
+                    b.Property<string>("Telephone")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Theme")
                         .IsRequired()
                         .HasMaxLength(100)
-                        .HasColumnType("TEXT");
+                        .HasColumnType("nvarchar(100)");
 
                     b.HasKey("Id");
 
                     b.ToTable("Events");
                 });
 
-            modelBuilder.Entity("EventPro.Domain.EventContext.Entities.Lot", b =>
+            modelBuilder.Entity("EventPro.Domain.ContextEvent.Entities.Lot", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("int");
 
-                    b.Property<int>("EventId")
-                        .HasColumnType("INTEGER");
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<DateTime>("FinalDate")
-                        .HasColumnType("TEXT");
+                    b.Property<int?>("EventId")
+                        .HasColumnType("int");
 
-                    b.Property<DateTime>("InitialDate")
-                        .HasColumnType("TEXT");
+                    b.Property<DateTime?>("FinalDate")
+                        .IsRequired()
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("InitialDate")
+                        .IsRequired()
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(100)
-                        .HasColumnType("TEXT");
+                        .HasColumnType("nvarchar(100)");
 
-                    b.Property<decimal>("Price")
-                        .HasColumnType("TEXT");
+                    b.Property<decimal?>("Price")
+                        .IsRequired()
+                        .HasPrecision(10, 2)
+                        .HasColumnType("NUMERIC");
 
-                    b.Property<int>("Quantity")
-                        .HasColumnType("INTEGER");
+                    b.Property<int?>("Quantity")
+                        .IsRequired()
+                        .HasColumnType("int");
 
                     b.HasKey("Id");
 
@@ -87,27 +106,29 @@ namespace EventPro.Infrastructure.Migrations
                     b.ToTable("Lots");
                 });
 
-            modelBuilder.Entity("EventPro.Domain.EventContext.Entities.SocialNetwork", b =>
+            modelBuilder.Entity("EventPro.Domain.ContextEvent.Entities.SocialNetwork", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<int?>("EventId")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("int");
 
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(100)
-                        .HasColumnType("TEXT");
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<int?>("SpeakerId")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("int");
 
                     b.Property<string>("URL")
                         .IsRequired()
                         .HasMaxLength(100)
-                        .HasColumnType("TEXT");
+                        .HasColumnType("nvarchar(100)");
 
                     b.HasKey("Id");
 
@@ -118,48 +139,50 @@ namespace EventPro.Infrastructure.Migrations
                     b.ToTable("SocialNetworks");
                 });
 
-            modelBuilder.Entity("EventPro.Domain.EventContext.Entities.Speaker", b =>
+            modelBuilder.Entity("EventPro.Domain.ContextEvent.Entities.Speaker", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
 
                     b.Property<string>("Email")
                         .IsRequired()
                         .HasMaxLength(150)
-                        .HasColumnType("TEXT");
+                        .HasColumnType("nvarchar(150)");
 
                     b.Property<string>("ImageUrl")
                         .IsRequired()
                         .HasMaxLength(100)
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("MiniCV")
-                        .IsRequired()
-                        .HasMaxLength(255)
-                        .HasColumnType("TEXT");
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(100)
-                        .HasColumnType("TEXT");
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<string>("Telephone")
                         .IsRequired()
-                        .HasColumnType("TEXT");
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
                     b.ToTable("Speakers");
                 });
 
-            modelBuilder.Entity("EventPro.Domain.EventContext.Entities.SpeakerEvent", b =>
+            modelBuilder.Entity("EventPro.Domain.ContextEvent.Entities.SpeakerEvent", b =>
                 {
-                    b.Property<int>("EventId")
-                        .HasColumnType("INTEGER");
+                    b.Property<int?>("EventId")
+                        .HasColumnType("int");
 
-                    b.Property<int>("SpeakerId")
-                        .HasColumnType("INTEGER");
+                    b.Property<int?>("SpeakerId")
+                        .HasColumnType("int");
 
                     b.HasKey("EventId", "SpeakerId");
 
@@ -168,41 +191,42 @@ namespace EventPro.Infrastructure.Migrations
                     b.ToTable("SpeakerEvents");
                 });
 
-            modelBuilder.Entity("EventPro.Domain.EventContext.Entities.Lot", b =>
+            modelBuilder.Entity("EventPro.Domain.ContextEvent.Entities.Lot", b =>
                 {
-                    b.HasOne("EventPro.Domain.EventContext.Entities.Event", "Event")
+                    b.HasOne("EventPro.Domain.ContextEvent.Entities.Event", "Event")
                         .WithMany("Lots")
                         .HasForeignKey("EventId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.Cascade);
 
                     b.Navigation("Event");
                 });
 
-            modelBuilder.Entity("EventPro.Domain.EventContext.Entities.SocialNetwork", b =>
+            modelBuilder.Entity("EventPro.Domain.ContextEvent.Entities.SocialNetwork", b =>
                 {
-                    b.HasOne("EventPro.Domain.EventContext.Entities.Event", "Event")
+                    b.HasOne("EventPro.Domain.ContextEvent.Entities.Event", "Event")
                         .WithMany("SocialNetworks")
-                        .HasForeignKey("EventId");
+                        .HasForeignKey("EventId")
+                        .OnDelete(DeleteBehavior.Cascade);
 
-                    b.HasOne("EventPro.Domain.EventContext.Entities.Speaker", "Speaker")
+                    b.HasOne("EventPro.Domain.ContextEvent.Entities.Speaker", "Speaker")
                         .WithMany("SocialNetworks")
-                        .HasForeignKey("SpeakerId");
+                        .HasForeignKey("SpeakerId")
+                        .OnDelete(DeleteBehavior.Cascade);
 
                     b.Navigation("Event");
 
                     b.Navigation("Speaker");
                 });
 
-            modelBuilder.Entity("EventPro.Domain.EventContext.Entities.SpeakerEvent", b =>
+            modelBuilder.Entity("EventPro.Domain.ContextEvent.Entities.SpeakerEvent", b =>
                 {
-                    b.HasOne("EventPro.Domain.EventContext.Entities.Event", "Event")
+                    b.HasOne("EventPro.Domain.ContextEvent.Entities.Event", "Event")
                         .WithMany("SpeakerEvents")
                         .HasForeignKey("EventId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("EventPro.Domain.EventContext.Entities.Speaker", "Speaker")
+                    b.HasOne("EventPro.Domain.ContextEvent.Entities.Speaker", "Speaker")
                         .WithMany("SpeakerEvents")
                         .HasForeignKey("SpeakerId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -213,7 +237,7 @@ namespace EventPro.Infrastructure.Migrations
                     b.Navigation("Speaker");
                 });
 
-            modelBuilder.Entity("EventPro.Domain.EventContext.Entities.Event", b =>
+            modelBuilder.Entity("EventPro.Domain.ContextEvent.Entities.Event", b =>
                 {
                     b.Navigation("Lots");
 
@@ -222,7 +246,7 @@ namespace EventPro.Infrastructure.Migrations
                     b.Navigation("SpeakerEvents");
                 });
 
-            modelBuilder.Entity("EventPro.Domain.EventContext.Entities.Speaker", b =>
+            modelBuilder.Entity("EventPro.Domain.ContextEvent.Entities.Speaker", b =>
                 {
                     b.Navigation("SocialNetworks");
 

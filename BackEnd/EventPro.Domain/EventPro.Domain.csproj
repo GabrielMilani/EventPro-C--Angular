@@ -6,10 +6,4 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
-  <ItemGroup>
-    <Folder Include="EventContext\Entities\" />
-    <Folder Include="SharedContext\Entities\" />
-    <Folder Include="SharedContext\Abstractions\" />
-  </ItemGroup>
-
 </Project>

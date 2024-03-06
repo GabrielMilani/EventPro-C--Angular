@@ -19,6 +19,7 @@ export class EventListComponent {
   public displayImg: boolean = true;
   public events: EventModel[] = [];
   public filteredEvents: EventModel[] = [];
+  public eventId: number = 0;
 
   private _listFilter: string = '';
 
@@ -76,13 +77,34 @@ export class EventListComponent {
   {
     this.displayImg = !this.displayImg;
   }
-  public openModal(template: TemplateRef<any>) {
+  public openModal(event: any, template: TemplateRef<any>, eventId: number): void
+  {
+    event.stopPropagation();
+    this.eventId = eventId
     this.modalRef = this.modalService.show(template, {class: 'modal-sm'});
   }
 
   public confirm(): void
   {
     this.modalRef.hide();
+    this.spinner.show();
+
+    this.eventService.deleteEvent(this.eventId).subscribe(
+      (result: any) =>
+      {
+        console.log(result);
+        this.toastr.success('Event deleted success', 'Deleted!');
+        this.spinner.hide();
+        this.getEvents();
+      },
+      (error: any) =>
+        {
+          console.error(error);
+          this.toastr.success('Delete events error', 'Error!');
+          this.spinner.hide();
+        },
+      () => this.spinner.hide()
+     );
     this.toastr.success('Event deleted success!', 'Deleted');
   }
 
@@ -94,4 +116,5 @@ export class EventListComponent {
   {
     this.router.navigate([`events/detail/${id}`]);
   }
+
 }

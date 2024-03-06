@@ -1,6 +1,6 @@
 import { ValidatorField } from './../../../helpers/ValidatorField';
 import { Component } from '@angular/core';
-import { AbstractControlOptions, FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { AbstractControlOptions, FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 
 @Component({
   selector: 'app-registration',
@@ -35,5 +35,9 @@ export class RegistrationComponent {
       password: ['', [Validators.required, Validators.minLength(6)]],
       passwordConfirmation: ['', Validators.required],
     },formOptions);
+  }
+  public cssValidator(campoForm: FormControl): any
+  {
+    return {'is-invalid': campoForm.errors && campoForm.touched};
   }
 }

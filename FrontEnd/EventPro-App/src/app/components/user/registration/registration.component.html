@@ -22,9 +22,7 @@
             type="text"
             class="form-control"
             formControlName="firstName"
-            [ngClass]="{
-              'is-invalid': f.firstName.errors && f.firstName.touched
-            }"
+            [ngClass]="cssValidator(f.firstName)"
             placeholder="Enter First Name"
           />
           <div *ngIf="f.firstName.errors?.required" class="invalid-feedback">
@@ -37,9 +35,7 @@
             type="text"
             class="form-control"
             formControlName="lastName"
-            [ngClass]="{
-              'is-invalid': f.lastName.errors && f.lastName.touched
-            }"
+            [ngClass]="cssValidator(f.lastName)"
             placeholder="Enter Last Name"
           />
           <div *ngIf="f.lastName.errors?.required" class="invalid-feedback">
@@ -52,9 +48,7 @@
         <input
           class="form-control"
           formControlName="email"
-          [ngClass]="{
-            'is-invalid': f.email.errors && f.email.touched
-          }"
+          [ngClass]="cssValidator(f.email)"
           type="text"
           placeholder="Insira o Nome Completo"
         />
@@ -70,9 +64,7 @@
         <input
           class="form-control"
           formControlName="userName"
-          [ngClass]="{
-            'is-invalid': f.userName.errors && f.userName.touched
-          }"
+          [ngClass]="cssValidator(f.userName)"
           type="text"
           placeholder="Insira o nome de Usuário"
         />
@@ -86,9 +78,7 @@
           <input
             class="form-control"
             formControlName="password"
-            [ngClass]="{
-              'is-invalid': f.password.errors && f.password.touched
-            }"
+            [ngClass]="cssValidator(f.password)"
             type="password"
             placeholder="Enter a Password"
           />
@@ -107,10 +97,7 @@
           <input
             class="form-control"
             formControlName="passwordConfirmation"
-            [ngClass]="{
-              'is-invalid':
-                f.passwordConfirmation.errors && f.passwordConfirmation.touched
-            }"
+            [ngClass]="cssValidator(f.passwordConfirmation)"
             type="password"
             placeholder="Confirm the Password"
           />
