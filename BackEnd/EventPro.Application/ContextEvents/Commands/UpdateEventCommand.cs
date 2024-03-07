@@ -13,8 +13,4 @@ public class UpdateEventCommand : IRequest<Event>
     public string ImageUrl { get;  set; }
     public string Email { get;  set; } 
     public string Telephone { get; set; }
-    public IEnumerable<Lot> Lots{ get; set; }
-    public IEnumerable<SocialNetwork> SocialNetworks { get; set; }
-    public IEnumerable<SpeakerEvent> SpeakerEvents { get; set; }
-
 }

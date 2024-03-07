@@ -12,14 +12,15 @@ import { Router } from '@angular/router';
   styleUrl: './event-list.component.scss'
 })
 export class EventListComponent {
-  public modalRef!: BsModalRef;
+  public modalRef: BsModalRef;
+  public events: EventModel[] = [];
+  public filteredEvents: EventModel[] = [];
+  public eventId: number = 0;
+
   public widthImg: number = 75;
   public heightImg: number = 50;
   public marginImg: number = 2;
   public displayImg: boolean = true;
-  public events: EventModel[] = [];
-  public filteredEvents: EventModel[] = [];
-  public eventId: number = 0;
 
   private _listFilter: string = '';
 
@@ -29,62 +30,50 @@ export class EventListComponent {
               private spinner: NgxSpinnerService,
               private router: Router){ }
 
-  public ngOnInit(): void
-  {
+  public ngOnInit(): void{
     this.spinner.show();
     this.LoadEvents();
   }
 
-  public LoadEvents(): void
-  {
+  public LoadEvents(): void{
     this.spinner.show();
     this.eventService.getEvents().subscribe(
-      (EventResponse : EventModel[]) =>
-      {
+      (EventResponse : EventModel[]) =>{
         this.events = EventResponse;
         this.filteredEvents = this.events;
       },
-      (error: any) =>
-      {
+      (error: any) =>{
         this.spinner.hide();
-        this.toastr.success('Load events error', 'Error!');
-      },
-      () => this.spinner.hide()
-    )
+        this.toastr.error('Load events error', 'Error!');
+      }).add(() => this.spinner.hide())
   }
 
-  public get listFilter(): string
-  {
+  public get listFilter(): string{
     return this._listFilter;
   }
 
-  public set listFilter(value: string)
-  {
+  public set listFilter(value: string){
     this._listFilter = value;
     this.filteredEvents = this.listFilter ? this.filterEvents(this.listFilter) : this.events;
   }
 
-  public filterEvents(filterBy: string): EventModel[]
-  {
+  public filterEvents(filterBy: string): EventModel[]{
     filterBy = filterBy.toLocaleLowerCase();
       return this.events.filter(
         (event: {theme: string; local: string;}) => event.theme.toLocaleLowerCase().indexOf(filterBy) !== -1 ||
                                                     event.local.toLocaleLowerCase().indexOf(filterBy)!== -1)
   }
 
-  public displayingImg() : void
-  {
+  public displayingImg() : void{
     this.displayImg = !this.displayImg;
   }
-  public openModal(event: any, template: TemplateRef<any>, eventId: number): void
-  {
+  public openModal(event: any, template: TemplateRef<any>, eventId: number): void{
     event.stopPropagation();
     this.eventId = eventId
     this.modalRef = this.modalService.show(template, {class: 'modal-sm'});
   }
 
-  public confirm(): void
-  {
+  public confirm(): void{
     this.modalRef.hide();
     this.spinner.show();
 
@@ -99,12 +88,10 @@ export class EventListComponent {
       }).add(() => this.spinner.hide());
   }
 
-  public decline(): void
-  {
+  public decline(): void{
     this.modalRef.hide();
   }
-  public detailingEvent(id: number): void
-  {
+  public detailingEvent(id: number): void{
     this.router.navigate([`events/detail/${id}`]);
   }
 
