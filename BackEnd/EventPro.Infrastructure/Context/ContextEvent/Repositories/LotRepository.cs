@@ -49,4 +49,19 @@ public class LotRepository : ILotRepository
         _context.Lots.Remove(lot);
         return lot;
     }
+
+    // Aula de angular!
+    public async Task<List<Lot>> GetLotsByEventId(int eventId)
+    {
+        IQueryable<Lot> query = _context.Lots;
+        query = query.AsNoTracking().Where(lot => lot.EventId == eventId);
+        return await query.ToListAsync();
+    }
+
+    public async Task<Lot> GetLotByIds(int eventId, int id)
+    {
+        IQueryable<Lot> query = _context.Lots;
+        query = query.AsNoTracking().Where(lot => lot.EventId == eventId && lot.Id == id);
+        return await query.FirstOrDefaultAsync();
+    }
 }

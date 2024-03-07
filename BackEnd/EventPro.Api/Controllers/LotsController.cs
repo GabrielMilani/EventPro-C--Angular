@@ -19,20 +19,6 @@ public class LotsController : ControllerBase
         var lots = await _mediator.Send(query);
         return Ok(lots);
     }
-    [HttpGet("{id}")]
-    public async Task<IActionResult> GetLotById(int id)
-    {
-        var query = new GetLotByIdQuery { Id = id };
-        var lot = await _mediator.Send(query);
-        return lot != null ? Ok(lot) : NotFound("Lot not found");
-    }
-
-    [HttpPost]
-    public async Task<IActionResult> CreateLot(CreateLotCommand command)
-    {
-        var createdLot = await _mediator.Send(command);
-        return CreatedAtAction(nameof(GetLot), new { id = createdLot.Id }, createdLot);
-    }
 
     [HttpPut("{id}")]
     public async Task<IActionResult> UpdateLot(int id, UpdateLotCommand command)
