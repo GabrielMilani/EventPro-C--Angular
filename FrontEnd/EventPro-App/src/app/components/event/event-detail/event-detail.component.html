@@ -61,12 +61,8 @@
             class="form-control"
             [ngClass]="cssValidator(f.quantityPeople)"
             formControlName="quantityPeople"
-            placeholder=""
-          />
-          <div
-            *ngIf="f.quantityPeople.errors?.required"
-            class="invalid-feedback"
-          >
+            placeholder="0"/>
+          <div *ngIf="f.quantityPeople.errors?.required" class="invalid-feedback">
             Quantity people is required !
           </div>
           <div *ngIf="f.quantityPeople.errors?.max" class="invalid-feedback">
@@ -75,8 +71,9 @@
         </div>
         <div class="form-group col-md-3">
           <label>Telephone</label>
-          <input type="text" class="form-control" [ngClass]="cssValidator(f.telephone)"
-          formControlName="telephone" placeholder="(000) 90000-0000" [(ngModel)]="eventModel.telephone">
+          <input type="text" class="form-control"
+          [ngClass]="cssValidator(f.telephone)"
+          formControlName="telephone" placeholder="(000) 90000-0000">
           <div *ngIf="f.telephone.errors?.required && f.telephone.touched" class="invalid-feedback">
             telephone is required.
           </div>
@@ -128,3 +125,90 @@
     </div>
   </form>
 </div>
+
+<div class="card rounded shadow-sm mt-4" *ngIf="modeEdit">
+  <div class="p-3">
+    <div class="d-flex border-bottom">
+      <h2 class="mr-auto">
+        Lotes do Evento
+      </h2>
+      <h2>
+        <i class="fas fa-money-bill-wave"></i>
+      </h2>
+    </div>
+    <p>Clique em Lote para adicionar e preencher novos Lotes</p>
+    <div class="form-row p-1">
+      <div [formGroup]="form" class="col">
+        <div formArrayName="lots" *ngFor="let lot of lots.controls; let i=index">
+          <fieldset [formGroupName]="i" class="form-group">
+            <legend class="d-flex justify-content-between capitalize">
+              <button class="p-2 btn btn-sm btn-outline-warning mb-1 d-flex"
+                tooltip="Excluir Lote"
+                [adaptivePosition]="false"
+                [delay]="500"
+                placement="left">
+              <i class="fa fa-window-close my-1"></i>
+              <b class="ml-1 d-none d-sm-block">Excluir</b>
+            </button>
+          </legend>
+          <div class="row">
+            <div class="form-group col-md-4">
+              <label>Name</label>
+              <input
+              [ngClass]=" cssValidator(lots.get(i+'.name'))"
+              type="text" class="form-control"
+              formControlName="name"
+              placeholder="Lote">
+            </div>
+            <div class="form-group col-md-4">
+              <label>Quantity</label>
+              <input
+              [ngClass]=" cssValidator(lots.get(i+'.quantity'))"
+              type="text" class="form-control"
+              formControlName="quantity"
+              placeholder="000">
+            </div>
+            <div class="form-group col-md-4">
+              <label>Price</label>
+              <input
+              [ngClass]=" cssValidator(lots.get(i+'.price'))"
+              type="text" currencyMask class="form-control"
+              formControlName="price"
+              placeholder="R$ 0,00">
+            </div>
+            <div class="form-group col-md-4">
+              <label>Initial Date</label>
+              <input
+              type="text" class="form-control"
+              formControlName="initialDate"
+              placeholder="01/01/2019">
+            </div>
+            <div class="form-group col-md-4">
+              <label>Final Date</label>
+              <input
+              type="text" class="form-control"
+              formControlName="finalDate"
+              placeholder="01/01/2019">
+            </div>
+          </div>
+        </fieldset>
+      </div>
+    </div>
+  </div>
+  <button (click)="addLot()" class="d-flex btn btn-outline-primary">
+    <i class="fa fa-plus-circle my-1"></i>
+    <b class="ml-1">Lote</b>
+  </button>
+</div>
+<div class="card-footer">
+  <div class="d-flex">
+    <button class="btn btn-outline-secondary mr-auto border">
+      Cancelar Alteração
+    </button>
+    <button class="btn btn-success">
+      Salvar Lotes
+    </button>
+  </div>
+</div>
+</div>
+<br>

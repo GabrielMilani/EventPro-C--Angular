@@ -20,6 +20,7 @@ import { ToastrModule } from 'ngx-toastr';
 
 import { NgxSpinnerModule } from 'ngx-spinner';
 
+import { LotService } from './services/lot.service';
 import { EventService } from './services/event.service';
 
 import { DateTimeFormatPipe } from './helpers/DateTimeFormat.pipe';
@@ -77,7 +78,7 @@ defineLocale('pt-br', ptBrLocale);
     NgxSpinnerModule,
 
   ],
-  providers: [EventService],
+  providers: [EventService, LotService],
   bootstrap: [AppComponent],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })

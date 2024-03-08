@@ -16,12 +16,12 @@ export class EventService {
     .pipe(take(1));
   }
 
-  public getEventsByTheme(theme: string) : Observable<EventModel[]>
-  {
-    return this.http
-    .get<EventModel[]>(`${this.baseURL}/${theme}/theme`)
-    .pipe(take(1));
-  }
+  // public getEventsByTheme(theme: string) : Observable<EventModel[]>
+  //{
+   // return this.http
+  //  .get<EventModel[]>(`${this.baseURL}/${theme}/theme`)
+   // .pipe(take(1));
+  //}
 
   public getEventById(id: number) : Observable<EventModel>
   {

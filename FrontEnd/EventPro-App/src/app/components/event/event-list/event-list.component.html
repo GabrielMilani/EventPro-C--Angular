@@ -10,7 +10,7 @@
           type="text"
           class="form-control"
           placeholder="Search"
-          [(ngModel)]="listFilter"/>
+          />
       </div>
     </div>
     <div>
@@ -35,14 +35,14 @@
         <th class="d-none d-md-table-cell">Local</th>
         <th>Date</th>
         <th class="d-none d-md-table-cell">Quantity Peoples</th>
-        <th class="d-none d-md-table-cell">Lot</th>
+        <!-- <th class="d-none d-md-table-cell">Lot</th> -->
         <th>Options</th>
       </tr>
     </thead>
     <tbody *ngIf="events && events.length">
       <tr *ngFor="let event of events" (click)="detailingEvent(event.id)" style="cursor: pointer;">
         <td class="d-none d-md-table-cell">
-          <img [collapse]="displayImg"
+          <img [collapse]="!displayImg"
             [isAnimated]="true"
             src="/assets/{{ event.imageUrl }}"
             [style.width.px]="widthImg"
@@ -54,7 +54,7 @@
         <td class="d-none d-md-table-cell">{{ event.local }}</td>
         <td>{{ event.eventDate | DateTimePipe }}</td>
         <td class="d-none d-md-table-cell">{{ event.quantityPeople }}</td>
-        <td class="d-none d-md-table-cell">{{ event.lots[0]?.name  | uppercase}}</td>
+        <!-- <td class="d-none d-md-table-cell">{{ event.lots[0]?.name  | uppercase}}</td>--->
         <td>
           <button type="button" class="btn btn-danger btn-lg" tooltip="Delete" (click)="openModal($event, template, event.id)">
             <i class="fa fa-trash"></i>

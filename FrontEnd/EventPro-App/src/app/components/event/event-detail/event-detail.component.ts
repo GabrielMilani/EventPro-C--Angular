@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
-import { AbstractControl, FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
+import { ActivatedRoute, Router } from '@angular/router';
+import { AbstractControl, FormArray, FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 
 import { NgxSpinnerService } from 'ngx-spinner';
 import { ToastrService } from 'ngx-toastr';
@@ -9,6 +9,7 @@ import { BsModalRef } from 'ngx-bootstrap/modal';
 
 import { EventModel } from './../../../models/EventModel';
 import { EventService } from '../../../services/event.service';
+import { LotModel } from '../../../models/LotModel';
 
 
 @Component({
@@ -21,7 +22,15 @@ export class EventDetailComponent {
   eventId: number;
   eventModel = {}  as EventModel;
   form!: FormGroup;
-  modeSave = 'post';
+  stateSave = 'post';
+
+  public get modeEdit(): boolean{
+    return this.stateSave === 'put';
+  }
+
+  public get lots(): FormArray{
+    return this.form.get('lots') as FormArray
+  }
 
   public get f(): any{
     return this.form.controls;
@@ -41,27 +50,32 @@ export class EventDetailComponent {
               private activatedRouter: ActivatedRoute,
               private eventService: EventService,
               private spinner: NgxSpinnerService,
-              private toastr: ToastrService){
+              private toastr: ToastrService,
+              private router: Router){
     this.localeService.use('pt-br')
   }
 
   public loadEvent(): void{
     this.eventId = +this.activatedRouter.snapshot.paramMap.get('id');
 
-    if(this.eventId !== null){
+    if(this.eventId !== null && this.eventId !== 0){
       this.spinner.show();
 
-      this.modeSave = 'put';
+      this.stateSave = 'put';
 
-      this.eventService.getEventById(this.eventId).subscribe(
+      this.eventService
+      .getEventById(this.eventId)
+      .subscribe(
       (eventModel: EventModel) =>{
-          this.eventModel = {...eventModel}
+          this.eventModel = {...eventModel};
           this.form.patchValue(this.eventModel);
         },
       (error: any) =>{
-          this.toastr.error('Load event error.', 'Error!')
           console.error(error);
-        }).add(() => this.spinner.hide());
+          this.toastr.error('Failed event insert.', 'Error!');
+        }
+      )
+      .add(() => this.spinner.hide());
     }
   }
 
@@ -79,9 +93,24 @@ export class EventDetailComponent {
       email: ['', [Validators.required, Validators.email]],
       imageUrl: ['', Validators.required],
       quantityPeople: ['', [Validators.required, Validators.max(120000)]],
+      lots: this.fb.array([])
     });
   }
 
+  public addLot(): void{
+    this.lots.push(this.createLot({id: 0} as LotModel));
+  }
+
+  public createLot(lot: LotModel): FormGroup{
+    return this.fb.group({
+      id: [lot.id],
+      name: [lot.name, Validators.required],
+      quantity: [lot.quantity, Validators.required],
+      price: [lot.price, Validators.required],
+      initialDate: [lot.initialDate],
+      finalDate: [lot.finalDate],
+    })
+  }
   public resetForm(): void{
     this.form.reset();
   }
@@ -93,12 +122,15 @@ export class EventDetailComponent {
   public saveChanges(): void{
     this.spinner.show();
     if(this.form.valid){
-      this.eventModel = (this.modeSave === 'post')
+      this.eventModel = (this.stateSave === 'post')
                     ? {...this.form.value}
                     : {id: this.eventModel.id, ...this.form.value};
 
-      this.eventService[this.modeSave](this.eventModel).subscribe(
-        () =>{ this.toastr.success('Event saved success.', 'Success!')},
+      this.eventService[this.stateSave](this.eventModel).subscribe(
+        (eventReturn: EventModel) =>{
+          this.toastr.success('Event saved success.', 'Success!');
+          this.router.navigate([`events/detail/${eventReturn.id}`]);
+        },
         (error: any) =>{
           console.error(error);
           this.toastr.error('Failed event insert.', 'Error!');

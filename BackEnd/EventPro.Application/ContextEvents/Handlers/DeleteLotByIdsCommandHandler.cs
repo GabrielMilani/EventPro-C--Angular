@@ -20,7 +20,7 @@ public class DeleteLotByIdsCommandHandler : IRequestHandler<DeleteLotByIdsComman
 
     public async Task<LotDto> Handle(DeleteLotByIdsCommand request, CancellationToken cancellationToken)
     {
-        var lot = await _unitOfWork.LotRepository.DeleteLotByIds(request.Id, request.EventId);
+        var lot = await _unitOfWork.LotRepository.DeleteLotByIds(request.EventId, request.Id);
         if (lot == null) return null;
 
         return _mapper.Map<LotDto>(lot);
