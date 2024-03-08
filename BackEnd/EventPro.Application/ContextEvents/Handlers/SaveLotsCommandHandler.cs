@@ -1,62 +1,52 @@
-﻿using EventPro.Application.ContextEvents.Commands;
+﻿using AutoMapper;
+using EventPro.Application.ContextEvents.Commands;
+using EventPro.Application.ContextEvents.Queries;
+using EventPro.Application.DTOs;
 using EventPro.Domain.ContextEvent.Entities;
 using EventPro.Domain.ContextShared.Abstractions;
 using MediatR;
 
 namespace EventPro.Application.ContextEvents.Handlers;
 
-public class SaveLotsCommandHandler : IRequestHandler<SaveLotsCommand, List<Lot>>
+public class SaveLotsCommandHandler : IRequestHandler<SaveLotsCommand, LotDto[]>
 {
     private readonly IUnitOfWork _unitOfWork;
+    private readonly IMapper _mapper;
+    private readonly IMediator _mediator;
 
-    public SaveLotsCommandHandler(IUnitOfWork unitOfWork)
+    public SaveLotsCommandHandler(IUnitOfWork unitOfWork, IMapper mapper, IMediator mediator)
     {
         _unitOfWork = unitOfWork;
+        _mapper = mapper;
+        _mediator = mediator;
     }
 
-    public async Task<List<Lot>> Handle(SaveLotsCommand request, CancellationToken cancellationToken)
+    public async Task<LotDto[]> Handle(SaveLotsCommand request, CancellationToken cancellationToken)
     {
-        try
-        {
-            var lots = await _unitOfWork.LotRepository.GetLotsByEventId(request.EventId);
-            if (lots == null) return null;
 
-            foreach (var requestLot in request.Lots)
+        var lots = await _unitOfWork.LotRepository.GetLotsByEventId(request.EventId);
+        if (lots == null) return null;
+
+        foreach (var requestLot in request.Lots)
+        {
+            if (requestLot.Id == 0 || requestLot.Id == null )
             {
-                if (requestLot.Id == 0){
-
-                    var newLot = new Lot(requestLot.Name,
-                                         requestLot.Quantity,                 
-                                         requestLot.Price,
-                                         requestLot.InitialDate,
-                                         requestLot.FinalDate, 
-                                         request.EventId,
-                                         requestLot.Event);
-                    await _unitOfWork.LotRepository.AddLot(newLot);
-                    await _unitOfWork.CommitAsync();
-                }
-                else{
-                    var lot = lots.FirstOrDefault(lot => lot.Id == requestLot.Id);
-                    if (lot == null)
-                    {
-                        throw new InvalidOperationException("Lot not found");
-                    }
-                    lot.Update(requestLot.Name,
-                               requestLot.Quantity,                 
-                               requestLot.Price,
-                               requestLot.InitialDate,
-                               requestLot.FinalDate, 
-                               requestLot.EventId,
-                               requestLot.Event);
-                    _unitOfWork.LotRepository.UpdateLot(lot);
-                    await _unitOfWork.CommitAsync();
-                }
+                var command = new CreateLotCommand();
+                command.Lot = _mapper.Map<LotDto>(requestLot);
+                command.EventId = request.EventId;
+                await _mediator.Send(command);
             }
-            return lots;
+            else
+            {
+               var command = new UpdateLotCommand();
+               command.Lot = _mapper.Map<LotDto>(requestLot);
+               command.EventId = request.EventId;
+               await _mediator.Send(command);
+            }
         }
-        catch (Exception e)
-        {
-            throw new Exception(e.Message);
-        }  
+        var commandReturn = new GetLotsByEventIdQuery();
+        commandReturn.EventId = request.EventId; 
+        var lotReturn = await _mediator.Send(commandReturn);
+        return _mapper.Map<LotDto[]>(lotReturn);
     }
 }

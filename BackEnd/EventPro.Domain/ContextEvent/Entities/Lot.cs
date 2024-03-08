@@ -33,6 +33,10 @@ public sealed class Lot: Entity
     {
         ValidateDomain(name, quantity, price, initialDate, finalDate, eventId, @event);
     }
+    public void UpdateEventId(int? eventId)
+    {
+        EventId = eventId;
+    }
 
     private void ValidateDomain(string? name, int? quantity, decimal? price, DateTime? initialDate, DateTime? finalDate, 
         int? eventId, Event? @event)

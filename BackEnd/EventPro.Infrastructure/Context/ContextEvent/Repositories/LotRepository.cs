@@ -12,20 +12,6 @@ public class LotRepository : ILotRepository
     public LotRepository(AppDbContext context)
         => _context = context;
 
-    public async Task<IEnumerable<Lot>> GetLots()
-    {
-        var lotList = await _context.Lots.ToListAsync();
-        return lotList ?? Enumerable.Empty<Lot>();
-    }
-
-    public async Task<Lot> GetLotById(int lotId)
-    {
-        var lot = await _context.Lots.FindAsync(lotId);
-        if (lot is null)
-            throw new InvalidOperationException("Lot not found");
-        return lot;
-    }
-
     public async Task<Lot> AddLot(Lot lot)
     {
         if (lot is null)
@@ -34,28 +20,20 @@ public class LotRepository : ILotRepository
         return lot;
     }
 
-    public void UpdateLot(Lot lot)
+    public async Task<Lot> UpdateLot(Lot lot)
     {
         if (lot is null)
             throw new ArgumentNullException(nameof(lot));
         _context.Lots.Update(lot);
-    }
-
-    public async Task<Lot> DeleteLot(int lotId)
-    {
-        var lot = await GetLotById(lotId);
-        if (lot is null)
-            throw new InvalidOperationException("Event not found");
-        _context.Lots.Remove(lot);
         return lot;
     }
 
     // Aula de angular!
-    public async Task<List<Lot>> GetLotsByEventId(int eventId)
+    public async Task<Lot[]> GetLotsByEventId(int eventId)
     {
         IQueryable<Lot> query = _context.Lots;
         query = query.AsNoTracking().Where(lot => lot.EventId == eventId);
-        return await query.ToListAsync();
+        return await query.ToArrayAsync();
     }
 
     public async Task<Lot> GetLotByIds(int eventId, int id)
@@ -63,5 +41,14 @@ public class LotRepository : ILotRepository
         IQueryable<Lot> query = _context.Lots;
         query = query.AsNoTracking().Where(lot => lot.EventId == eventId && lot.Id == id);
         return await query.FirstOrDefaultAsync();
+    }
+
+    public async Task<Lot> DeleteLotByIds(int eventId, int id)
+    {
+        var lot = await GetLotByIds(eventId, id);
+        if (lot is null)
+            throw new InvalidOperationException("Event not found");
+        _context.Lots.Remove(lot);
+        return lot;
     }
 }

@@ -1,20 +1,24 @@
-﻿using EventPro.Application.ContextEvents.Commands;
+﻿using AutoMapper;
+using EventPro.Application.ContextEvents.Commands;
+using EventPro.Application.DTOs;
 using EventPro.Domain.ContextEvent.Entities;
 using EventPro.Domain.ContextShared.Abstractions;
 using MediatR;
 
 namespace EventPro.Application.ContextEvents.Handlers;
 
-public class CreateEventCommandHandler : IRequestHandler<CreateEventCommand, Event>
+public class CreateEventCommandHandler : IRequestHandler<CreateEventCommand, EventDto>
 {
     private readonly IUnitOfWork _unitOfWork;
+    private readonly IMapper _mapper;
 
-    public CreateEventCommandHandler(IUnitOfWork unitOfWork)
+    public CreateEventCommandHandler(IUnitOfWork unitOfWork, IMapper mapper)
     {
         _unitOfWork = unitOfWork;
+        _mapper = mapper;
     }
 
-    public async Task<Event> Handle(CreateEventCommand request, CancellationToken cancellationToken)
+    public async Task<EventDto> Handle(CreateEventCommand request, CancellationToken cancellationToken)
     {
         var newEvent = new Event(request.Theme,
                                  request.Local,
@@ -27,6 +31,6 @@ public class CreateEventCommandHandler : IRequestHandler<CreateEventCommand, Eve
         await _unitOfWork.EventRepository.AddEvent(newEvent);
         await _unitOfWork.CommitAsync();
 
-        return newEvent;
+        return _mapper.Map<EventDto>(newEvent);
     }
 }

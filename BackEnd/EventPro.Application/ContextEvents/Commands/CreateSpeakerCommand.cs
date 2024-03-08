@@ -1,9 +1,10 @@
-﻿using EventPro.Domain.ContextEvent.Entities;
+﻿using EventPro.Application.DTOs;
+using EventPro.Domain.ContextEvent.Entities;
 using MediatR;
 
 namespace EventPro.Application.ContextEvents.Commands;
 
-public class CreateSpeakerCommand : IRequest<Speaker>
+public class CreateSpeakerCommand : IRequest<SpeakerDto>
 {
     public string Name { get; set; }
     public string Description { get; set; }

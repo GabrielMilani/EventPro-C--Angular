@@ -1,9 +1,10 @@
-﻿using EventPro.Domain.ContextEvent.Entities;
+﻿using EventPro.Application.DTOs;
+using EventPro.Domain.ContextEvent.Entities;
 using MediatR;
 
 namespace EventPro.Application.ContextEvents.Commands;
 
-public class CreateSocialNetworkCommand : IRequest<SocialNetwork>
+public class CreateSocialNetworkCommand : IRequest<SocialNetworkDto>
 {
     public string Name { get; set; }
     public string URL { get; set; }

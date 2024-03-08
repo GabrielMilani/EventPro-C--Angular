@@ -23,4 +23,20 @@ public class LotDapperRepository : ILotDapperRepository
         string query = "SELECT * FROM Lots WHERE Id = @Id";
         return await _dbConnection.QueryFirstOrDefaultAsync<Lot>(query, new { Id = lotId });
     }
+
+    public async Task<IEnumerable<Lot>> GetLotsByEventId(int eventId)
+    {
+        string query = "SELECT * FROM Lots WHERE Lots.EventId = @EventId";
+        return await _dbConnection.QueryAsync<Lot>(query, new { EventId = eventId });
+    }
+
+    public async Task<Lot?> GetLotByIds(int eventId, int lotId)
+    {
+        string query = "SELECT * FROM Lots WHERE Lots.Id = @Id AND Lots.EventId = @EventId";
+        return await _dbConnection.QueryFirstOrDefaultAsync<Lot>(query, new
+        {
+            EventId = eventId, 
+            Id = lotId
+        });
+    }
 }

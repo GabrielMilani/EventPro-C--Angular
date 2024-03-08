@@ -11,12 +11,11 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="ContextEvents\Queries\" />
-    <Folder Include="DTOs\" />
     <Folder Include="Services\" />
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="AutoMapper" Version="12.0.1" />
     <PackageReference Include="MediatR" Version="12.2.0" />
   </ItemGroup>
 

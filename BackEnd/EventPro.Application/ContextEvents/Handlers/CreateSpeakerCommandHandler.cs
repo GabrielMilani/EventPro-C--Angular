@@ -1,29 +1,29 @@
-﻿using EventPro.Application.ContextEvents.Commands;
+﻿using AutoMapper;
+using EventPro.Application.ContextEvents.Commands;
+using EventPro.Application.DTOs;
 using EventPro.Domain.ContextEvent.Entities;
 using EventPro.Domain.ContextShared.Abstractions;
 using MediatR;
 
 namespace EventPro.Application.ContextEvents.Handlers;
 
-public class CreateSpeakerCommandHandler : IRequestHandler<CreateSpeakerCommand, Speaker>
+public class CreateSpeakerCommandHandler : IRequestHandler<CreateSpeakerCommand, SpeakerDto>
 {
     private readonly IUnitOfWork _unitOfWork;
-
-    public CreateSpeakerCommandHandler(IUnitOfWork unitOfWork)
+    private readonly IMapper _mapper;
+    public CreateSpeakerCommandHandler(IUnitOfWork unitOfWork , IMapper mapper)
     {
         _unitOfWork = unitOfWork;
+        _mapper = mapper;
     }
 
-    public async Task<Speaker> Handle(CreateSpeakerCommand request, CancellationToken cancellationToken)
+    public async Task<SpeakerDto> Handle(CreateSpeakerCommand request, CancellationToken cancellationToken)
     {
-        var newSpeaker = new Speaker(request.Name,
-                                    request.Description, 
-                                    request.ImageUrl,
-                                    request.Telephone, 
-                                    request.Email);
+        var newSpeaker = _mapper.Map<Speaker>(request);
         await _unitOfWork.SpeakerRepository.AddSpeaker(newSpeaker);
         await _unitOfWork.CommitAsync();
 
-        return newSpeaker;
+        var result = _mapper.Map<SpeakerDto>(newSpeaker);
+        return result;
     }
 }
