@@ -12,6 +12,7 @@ import { ModalModule } from 'ngx-bootstrap/modal';
 import { BsDatepickerModule } from 'ngx-bootstrap/datepicker';
 import { defineLocale } from 'ngx-bootstrap/chronos';
 import { ptBrLocale } from 'ngx-bootstrap/locale';
+import { NgxCurrencyDirective } from "ngx-currency";
 
 import { AppComponent } from './app.component';
 import { AppRoutingModule } from './app-routing.module';
@@ -76,7 +77,7 @@ defineLocale('pt-br', ptBrLocale);
       preventDuplicates: true,
       progressBar: true}),
     NgxSpinnerModule,
-
+    NgxCurrencyDirective
   ],
   providers: [EventService, LotService],
   bootstrap: [AppComponent],

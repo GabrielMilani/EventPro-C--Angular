@@ -1,8 +1,4 @@
 import {
-  TooltipDirective,
-  TooltipModule
-} from "./chunk-CO6ZRJDY.js";
-import {
   endOf,
   formatDate,
   getDay,
@@ -27,6 +23,10 @@ import {
   startOf,
   utcAsLocal
 } from "./chunk-YE2UUTVP.js";
+import {
+  TooltipDirective,
+  TooltipModule
+} from "./chunk-CO6ZRJDY.js";
 import {
   NG_VALIDATORS,
   NG_VALUE_ACCESSOR

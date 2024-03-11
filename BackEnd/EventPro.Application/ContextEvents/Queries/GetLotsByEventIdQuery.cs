@@ -1,21 +1,28 @@
-﻿using EventPro.Domain.ContextEvent.Abstractions;
+﻿using AutoMapper;
+using EventPro.Application.DTOs;
+using EventPro.Domain.ContextEvent.Abstractions;
 using EventPro.Domain.ContextEvent.Entities;
 using MediatR;
 
 namespace EventPro.Application.ContextEvents.Queries;
 
-public class GetLotsByEventIdQuery : IRequest<IEnumerable<Lot>>
+public class GetLotsByEventIdQuery : IRequest<LotDto[]>
 {
     public int EventId { get; set; }
-    public class GetLotsEventIdQueryHandler : IRequestHandler<GetLotsByEventIdQuery, IEnumerable<Lot>>
+    public class GetLotsEventIdQueryHandler : IRequestHandler<GetLotsByEventIdQuery, LotDto[]>
     {
         private readonly ILotDapperRepository _lotDapperRepository;
-        public GetLotsEventIdQueryHandler(ILotDapperRepository lotDapperRepository)
-            => _lotDapperRepository = lotDapperRepository;
-        public async Task<IEnumerable<Lot>> Handle(GetLotsByEventIdQuery request, CancellationToken cancellationToken)
+        private readonly IMapper _mapper;
+
+        public GetLotsEventIdQueryHandler(ILotDapperRepository lotDapperRepository, IMapper mapper)
+        {
+            _lotDapperRepository = lotDapperRepository;
+            _mapper = mapper;
+        }
+        public async Task<LotDto[]> Handle(GetLotsByEventIdQuery request, CancellationToken cancellationToken)
         {
             var lots = await _lotDapperRepository.GetLotsByEventId(request.EventId);
-            return lots;
+            return _mapper.Map<LotDto[]>(lots);
         }
     }
 }

@@ -13,9 +13,9 @@ import { Router } from '@angular/router';
 })
 export class EventListComponent {
   public modalRef: BsModalRef;
-  public events: EventModel[] = [];
+  public eventsModel: EventModel[] = [];
   public filteredEvents: EventModel[] = [];
-  public eventId: number = 0;
+  public eventModelId: number = 0;
 
   public widthImg: number = 75;
   public heightImg: number = 50;
@@ -39,8 +39,8 @@ export class EventListComponent {
     this.spinner.show();
     this.eventService.getEvents().subscribe(
       (EventResponse : EventModel[]) =>{
-        this.events = EventResponse;
-        this.filteredEvents = this.events;
+        this.eventsModel = EventResponse;
+        this.filteredEvents = this.eventsModel;
       },
       (error: any) =>{
         this.spinner.hide();
@@ -54,22 +54,22 @@ export class EventListComponent {
 
   public set listFilter(value: string){
     this._listFilter = value;
-    this.filteredEvents = this.listFilter ? this.filterEvents(this.listFilter) : this.events;
+    this.filteredEvents = this.listFilter ? this.filterEvents(this.listFilter) : this.eventsModel;
   }
 
   public filterEvents(filterBy: string): EventModel[]{
     filterBy = filterBy.toLocaleLowerCase();
-      return this.events.filter(
-        (event: {theme: string; local: string;}) => event.theme.toLocaleLowerCase().indexOf(filterBy) !== -1 ||
-                                                    event.local.toLocaleLowerCase().indexOf(filterBy)!== -1)
+      return this.eventsModel.filter(
+        (eventModel: {theme: string; local: string;}) => eventModel.theme.toLocaleLowerCase().indexOf(filterBy) !== -1 ||
+                                                         eventModel.local.toLocaleLowerCase().indexOf(filterBy)!== -1)
   }
 
   public displayingImg() : void{
     this.displayImg = !this.displayImg;
   }
-  public openModal(event: any, template: TemplateRef<any>, eventId: number): void{
-    event.stopPropagation();
-    this.eventId = eventId
+  public openModal(eventModel: any, template: TemplateRef<any>, eventModelId: number): void{
+    eventModel.stopPropagation();
+    this.eventModelId = eventModelId
     this.modalRef = this.modalService.show(template, {class: 'modal-sm'});
   }
 
@@ -77,7 +77,7 @@ export class EventListComponent {
     this.modalRef.hide();
     this.spinner.show();
 
-    this.eventService.deleteEvent(this.eventId).subscribe(
+    this.eventService.deleteEvent(this.eventModelId).subscribe(
       (result: any) =>{
         this.toastr.success('Event deleted success', 'Deleted!');
         this.LoadEvents();

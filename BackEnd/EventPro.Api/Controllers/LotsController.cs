@@ -4,6 +4,7 @@ using EventPro.Domain.ContextEvent.Entities;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics.Tracing;
+using AutoMapper;
 using EventPro.Application.DTOs;
 
 namespace EventPro.Api.Controllers;
@@ -12,8 +13,11 @@ namespace EventPro.Api.Controllers;
 public class LotsController : ControllerBase
 {
     private readonly IMediator _mediator;
+
     public LotsController(IMediator mediator)
-        => _mediator = mediator;
+    {
+        _mediator = mediator;
+    }
 
     [HttpGet("{eventId}")]
     public async Task<IActionResult> GetLots(int eventId)
@@ -38,9 +42,11 @@ public class LotsController : ControllerBase
     }
 
     [HttpPut("{eventId}")]
-    public async Task<IActionResult> SaveLots(int eventId, SaveLotsCommand command)
+    public async Task<IActionResult> SaveLots(int eventId, LotDto[] lots)
     {
-       command.EventId = eventId;
+        var command = new SaveLotsCommand();
+        command.EventId = eventId;
+        command.Lots = lots;
 
         var updatedLot = await _mediator.Send(command);
         return updatedLot != null ? Ok(updatedLot) : NotFound("Lot not found");

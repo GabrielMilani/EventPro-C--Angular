@@ -4,17 +4,17 @@ using MediatR;
 
 namespace EventPro.Application.ContextEvents.Queries;
 
-public class GetSpeakersQuery : IRequest<IEnumerable<Lot>>
+public class GetSpeakersQuery : IRequest<IEnumerable<Speaker>>
 {
-    public class GetLotQueryHandler : IRequestHandler<GetLotsQuery, IEnumerable<Lot>>
+    public class GetLotQueryHandler : IRequestHandler<GetSpeakersQuery, IEnumerable<Speaker>>
     {
-        private readonly ILotDapperRepository _lotDapperRepository;
-        public GetLotQueryHandler(ILotDapperRepository lotDapperRepository)
-            => _lotDapperRepository = lotDapperRepository;
-        public async Task<IEnumerable<Lot>> Handle(GetLotsQuery request, CancellationToken cancellationToken)
+        private readonly ISpeakerDapperRepository _speakerDapperRepository;
+        public GetLotQueryHandler(ISpeakerDapperRepository speakerDapperRepository)
+            => _speakerDapperRepository = speakerDapperRepository;
+        public async Task<IEnumerable<Speaker>> Handle(GetSpeakersQuery request, CancellationToken cancellationToken)
         {
-            var lots = await _lotDapperRepository.GetLots();
-            return lots;
+            var speakers = await _speakerDapperRepository.GetSpeakers();
+            return speakers;
         }
     }
 }

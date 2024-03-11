@@ -39,8 +39,8 @@
         <th>Options</th>
       </tr>
     </thead>
-    <tbody *ngIf="events && events.length">
-      <tr *ngFor="let event of events" (click)="detailingEvent(event.id)" style="cursor: pointer;">
+    <tbody *ngIf="eventsModel && eventsModel.length">
+      <tr *ngFor="let event of eventsModel" (click)="detailingEvent(event.id)" style="cursor: pointer;">
         <td class="d-none d-md-table-cell">
           <img [collapse]="!displayImg"
             [isAnimated]="true"
@@ -54,7 +54,7 @@
         <td class="d-none d-md-table-cell">{{ event.local }}</td>
         <td>{{ event.eventDate | DateTimePipe }}</td>
         <td class="d-none d-md-table-cell">{{ event.quantityPeople }}</td>
-        <!-- <td class="d-none d-md-table-cell">{{ event.lots[0]?.name  | uppercase}}</td>--->
+       <!--- <td class="d-none d-md-table-cell">{{ event.lots[0]?.name  | uppercase}}</td> -->
         <td>
           <button type="button" class="btn btn-danger btn-lg" tooltip="Delete" (click)="openModal($event, template, event.id)">
             <i class="fa fa-trash"></i>
@@ -62,7 +62,7 @@
         </td>
       </tr>
     </tbody>
-    <tfoot *ngIf="!events.length">
+    <tfoot *ngIf="!eventsModel.length">
       <tr>
         <td colspan="8" class="test-center">
           <h4>Events not fond!</h4>
@@ -71,6 +71,7 @@
     </tfoot>
   </table>
 </div>
+
 <ng-template #template>
   <div class="modal-body text-center">
     <p>Do you want to confirm the deletion of the event?</p>

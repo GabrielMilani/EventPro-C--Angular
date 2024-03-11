@@ -22,7 +22,7 @@ public class DeleteLotByIdsCommandHandler : IRequestHandler<DeleteLotByIdsComman
     {
         var lot = await _unitOfWork.LotRepository.DeleteLotByIds(request.EventId, request.Id);
         if (lot == null) return null;
-
+        await _unitOfWork.CommitAsync();
         return _mapper.Map<LotDto>(lot);
     }
 }
