@@ -11,7 +11,7 @@ import { LotModel } from '../../../models/LotModel';
 import { EventModel } from './../../../models/EventModel';
 import { LotService } from './../../../services/lot.service';
 import { EventService } from '../../../services/event.service';
-
+import { environment } from '../../../../environments/environment';
 
 @Component({
   selector: 'app-event-detail',
@@ -19,12 +19,15 @@ import { EventService } from '../../../services/event.service';
   styleUrl: './event-detail.component.scss'
 })
 export class EventDetailComponent {
+[x: string]: any;
   modalRef: BsModalRef;
   eventModelId: number;
   eventModel = {}  as EventModel;
   form: FormGroup;
   stateSave = 'post';
   currentLot = {id: 0, name: '', indice: 0}
+  imageURL = '/assets/img/Upload.png';
+  file: File;
 
   public get modeEdit(): boolean{
     return this.stateSave === 'put';
@@ -72,6 +75,9 @@ export class EventDetailComponent {
       (eventModel: EventModel) =>{
           this.eventModel = {...eventModel};
           this.form.patchValue(this.eventModel);
+          if(this.eventModel.imageUrl !== ''){
+            this.imageURL = environment.apiURL +'resources/images/'+ this.eventModel.imageUrl;
+          }
           this.loadLots();
         },
       (error: any) =>{
@@ -111,7 +117,7 @@ export class EventDetailComponent {
       telephone: ['', Validators.required],
       eventDate: ['', Validators.required],
       email: ['', [Validators.required, Validators.email]],
-      imageUrl: ['', Validators.required],
+      imageUrl: [''],
       quantityPeople: ['', [Validators.required, Validators.max(120000)]],
       lots: this.fb.array([])
     });
@@ -212,4 +218,27 @@ export class EventDetailComponent {
     this.modalRef.hide();
   }
 
+  public onFileChange(ev: any): void{
+    const reader = new FileReader();
+
+    reader.onload = (event: any) => this.imageURL = event.target.result;
+
+    this.file = ev.target.files;
+    reader.readAsDataURL(this.file[0]);
+    this.uploadImage();
+  }
+
+  public uploadImage(): void{
+    this.spinner.show();
+    this.eventService.postUpload(this.eventModelId, this.file).subscribe(
+      () => {
+        this.loadEvent();
+        this.toastr.success('Image change success','Success!');
+      },
+      (error : any) => {
+        console.error(error);
+        this.toastr.error('Image change error','Error!')
+      },
+    ).add(() =>{this.spinner.hide()});
+  }
 }

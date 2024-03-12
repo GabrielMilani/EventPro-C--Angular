@@ -5,6 +5,7 @@ import { EventService } from '../../../services/event.service';
 import { ToastrService } from 'ngx-toastr';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { Router } from '@angular/router';
+import { environment } from '../../../../environments/environment';
 
 @Component({
   selector: 'app-event-list',
@@ -62,6 +63,10 @@ export class EventListComponent {
       return this.eventsModel.filter(
         (eventModel: {theme: string; local: string;}) => eventModel.theme.toLocaleLowerCase().indexOf(filterBy) !== -1 ||
                                                          eventModel.local.toLocaleLowerCase().indexOf(filterBy)!== -1)
+  }
+
+  public returnImage(imageURL: string): string{
+    return (imageURL !== '') ? `${environment.apiURL}resources/images/${imageURL}` : 'assets/img/semImage.png';
   }
 
   public displayingImg() : void{

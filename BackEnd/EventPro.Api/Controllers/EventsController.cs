@@ -9,8 +9,14 @@ namespace EventPro.Api.Controllers;
 public class EventsController : ControllerBase
 {
     private readonly IMediator _mediator;
-    public EventsController(IMediator mediator)
-        => _mediator = mediator;
+
+    public EventsController(IMediator mediator, IWebHostEnvironment webHostEnvironment)
+    {
+        _mediator = mediator;
+        _webHostEnvironment = webHostEnvironment;
+    }
+
+    private readonly IWebHostEnvironment _webHostEnvironment;
 
     [HttpGet]
     public async Task<IActionResult> GetEvent()
@@ -25,6 +31,27 @@ public class EventsController : ControllerBase
         var query = new GetEventByIdQuery { Id = id };
         var @event = await _mediator.Send(query);
         return @event != null ? Ok(@event) : NotFound("Event not found");
+    }
+
+    [HttpPost("upload-image/{eventId}")]
+    public async Task<IActionResult> UploadImage(int eventId)
+    {
+        var query = new GetEventByIdQuery { Id = eventId };
+        var eventDto = await _mediator.Send(query);
+        if (eventDto == null) return NoContent();
+
+        var file = Request.Form.Files[0];
+        if (file.Length > 0)
+        {
+           DeleteImage(eventDto.ImageUrl);
+           eventDto.ImageUrl = await SaveImage(file);
+        }
+        var command = new UploadImageEventCommand();
+        command.Id = eventId;
+        command.EventDto = eventDto;
+        var eventReturn = await _mediator.Send(command);
+
+        return Ok(eventDto);
     }
 
     [HttpPost]
@@ -47,6 +74,35 @@ public class EventsController : ControllerBase
     {
         var command = new DeleteEventCommand { Id = id };
         var deletedEvent = await _mediator.Send(command);
-        return deletedEvent != null ? Ok(deletedEvent) : NotFound("Event not found");
-    } 
+        if (deletedEvent != null)
+        {
+           DeleteImage(deletedEvent.ImageUrl);
+           return Ok(deletedEvent);
+
+        }
+        else 
+            return NotFound("Event not found");
+    }
+
+    [NonAction]
+    public async Task<string> SaveImage(IFormFile imageFile)
+    {
+        string imageName = new String(Path.GetFileNameWithoutExtension(imageFile.FileName)
+                                        .Take(10).ToArray()).Replace(' ','-');
+        imageName = $"{imageName}{DateTime.UtcNow.ToString("yymmssfff")}{Path.GetExtension(imageFile.FileName)}";
+        var imagePath = Path.Combine(_webHostEnvironment.ContentRootPath, @"Resources/images", imageName);
+        using (var fileStream = new FileStream(imagePath, FileMode.Create))
+        {
+            await imageFile.CopyToAsync(fileStream);
+        } ;
+        return imageName;
+    }
+
+    [NonAction]
+    public void DeleteImage(string imageName)
+    {
+        var imagePath = Path.Combine(_webHostEnvironment.ContentRootPath, @"Resources/images", imageName);
+        if (System.IO.File.Exists(imagePath))
+            System.IO.File.Delete(imagePath);
+    }
 }

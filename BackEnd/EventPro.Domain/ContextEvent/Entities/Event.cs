@@ -38,6 +38,10 @@ public sealed class Event: Entity
     {
         ValidateDomain(theme, local, email, imageUrl, telephone, quantityPeople, eventDate);
     }
+    public void UpdateImageUrl(string? imageUrl)
+    {
+        ImageUrl = imageUrl;
+    }
     
     private void ValidateDomain(string? theme, string? local, string? email, string? imageUrl, string? telephone, 
         int? quantityPeople, DateTime? eventDate)

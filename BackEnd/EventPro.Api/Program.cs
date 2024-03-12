@@ -1,4 +1,5 @@
 using EventPro.CrossCutting.AppDependencies;
+using Microsoft.Extensions.FileProviders;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -23,4 +24,9 @@ app.MapControllers();
 app.UseCors(x => x.AllowAnyHeader()
                   .AllowAnyMethod()
                   .AllowAnyOrigin());
+app.UseStaticFiles(new StaticFileOptions()
+{
+    FileProvider = new PhysicalFileProvider(Path.Combine(Directory.GetCurrentDirectory(), "Resources")),
+    RequestPath = new PathString("/Resources")
+});
 app.Run();
