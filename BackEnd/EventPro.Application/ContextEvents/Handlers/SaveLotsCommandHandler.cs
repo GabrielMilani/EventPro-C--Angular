@@ -1,8 +1,6 @@
 ﻿using AutoMapper;
 using EventPro.Application.ContextEvents.Commands;
-using EventPro.Application.ContextEvents.Queries;
 using EventPro.Application.DTOs;
-using EventPro.Domain.ContextEvent.Entities;
 using EventPro.Domain.ContextShared.Abstractions;
 using MediatR;
 
@@ -44,8 +42,10 @@ public class SaveLotsCommandHandler : IRequestHandler<SaveLotsCommand, LotDto[]>
                await _mediator.Send(command);
             }
         }
-        var commandReturn = new GetLotsByEventIdQuery();
-        commandReturn.EventId = request.EventId; 
+        var commandReturn = new GetLotsByEventIdCommand
+        {
+            EventId = request.EventId
+        };
         var lotReturn = await _mediator.Send(commandReturn);
         return _mapper.Map<LotDto[]>(lotReturn);
     }

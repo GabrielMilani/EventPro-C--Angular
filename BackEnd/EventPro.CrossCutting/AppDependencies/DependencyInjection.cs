@@ -19,20 +19,13 @@ public static class DependencyInjection
         var connectionString = configuration.GetConnectionString("DefaultConnection");
 
         services.AddDbContext<AppDbContext>(options => options.UseSqlServer(connectionString));
-        services.AddSingleton<IDbConnection>(provider =>
-        {
-            var connection = new SqlConnection(connectionString);
-            connection.Open();
-            return connection;
-        });   
+
+
         services.AddScoped<IEventRepository, EventRepository>();
-        services.AddScoped<IEventDapperRepository, EventDapperRepository>();        
         services.AddScoped<ISpeakerRepository, SpeakerRepository>();
-        services.AddScoped<ISpeakerDapperRepository, SpeakerDapperRepository>();        
         services.AddScoped<ILotRepository, LotRepository>();
-        services.AddScoped<ILotDapperRepository, LotDapperRepository>();        
         services.AddScoped<ISocialNetworkRepository, SocialNetworkRepository>();
-        services.AddScoped<ISocialNetworkDapperRepository, SocialNetworkDapperRepository>();
+        services.AddScoped<IUserRepository, UserRepository>();
         services.AddScoped<IUnitOfWork, UnitOfWork>();
         
         var myHandlers = AppDomain.CurrentDomain.Load("EventPro.Application");

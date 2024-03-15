@@ -12,6 +12,7 @@ public class UnitOfWork : IUnitOfWork, IDisposable
     private ISpeakerRepository? _speakerRepository;
     private ILotRepository? _lotRepository;
     private ISocialNetworkRepository? _socialNetworkRepository;
+    private IUserRepository? _userRepository;
 
     private readonly AppDbContext _context;
 
@@ -26,7 +27,9 @@ public class UnitOfWork : IUnitOfWork, IDisposable
         => _lotRepository = _lotRepository ?? new LotRepository(_context);
     public ISocialNetworkRepository SocialNetworkRepository 
         => _socialNetworkRepository = _socialNetworkRepository ?? new SocialNetworkRepository(_context);
-    
+    public IUserRepository UserRepository 
+        => _userRepository = _userRepository ?? new UserRepository(_context);
+
     public async Task CommitAsync()
     {
         await _context.SaveChangesAsync();

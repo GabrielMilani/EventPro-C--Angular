@@ -21,7 +21,7 @@ public class CreateLotCommandHandler : IRequestHandler<CreateLotCommand, Lot>
     public async Task<Lot> Handle(CreateLotCommand request, CancellationToken cancellationToken)
     {
         var newLot = _mapper.Map<Lot>(request.Lot);
-        newLot.UpdateEventId(request.EventId);
+        newLot.EventId = request.EventId;
         await _unitOfWork.LotRepository.AddLot(newLot);
         await _unitOfWork.CommitAsync();
         return  newLot;

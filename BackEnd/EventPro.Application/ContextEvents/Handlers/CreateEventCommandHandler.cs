@@ -20,14 +20,8 @@ public class CreateEventCommandHandler : IRequestHandler<CreateEventCommand, Eve
 
     public async Task<EventDto> Handle(CreateEventCommand request, CancellationToken cancellationToken)
     {
-        var newEvent = new Event(request.Theme,
-                                 request.Local,
-                                 request.Email,
-                                 request.ImageUrl,
-                                 request.Telephone,
-                                 request.QuantityPeople, 
-                                 request.EventDate);
-
+        var newEvent = _mapper.Map<Event>(request);
+        newEvent.UserId = request.UserId;
         await _unitOfWork.EventRepository.AddEvent(newEvent);
         await _unitOfWork.CommitAsync();
 

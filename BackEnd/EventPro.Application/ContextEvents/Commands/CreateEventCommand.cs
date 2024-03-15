@@ -1,5 +1,6 @@
 ﻿using EventPro.Application.DTOs;
 using EventPro.Domain.ContextEvent.Entities;
+using EventPro.Domain.ContextEvent.Entities.Identity;
 using MediatR;
 
 namespace EventPro.Application.ContextEvents.Commands;
@@ -13,4 +14,6 @@ public class CreateEventCommand : IRequest<EventDto>
     public string Email { get;  set; }
     public string ImageUrl { get;  set; }
     public string Telephone { get; set; }
+    public int? UserId { get; set; }
+    public User? User { get; set; }
 }

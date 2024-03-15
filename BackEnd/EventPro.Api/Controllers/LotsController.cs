@@ -1,10 +1,6 @@
 ﻿using EventPro.Application.ContextEvents.Commands;
-using EventPro.Application.ContextEvents.Queries;
-using EventPro.Domain.ContextEvent.Entities;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using System.Diagnostics.Tracing;
-using AutoMapper;
 using EventPro.Application.DTOs;
 
 namespace EventPro.Api.Controllers;
@@ -22,7 +18,7 @@ public class LotsController : ControllerBase
     [HttpGet("{eventId}")]
     public async Task<IActionResult> GetLots(int eventId)
     {
-        var query = new GetLotsByEventIdQuery
+        var query = new GetLotsByEventIdCommand()
         {
             EventId = eventId
         };
@@ -32,7 +28,7 @@ public class LotsController : ControllerBase
     [HttpGet("{eventId}/{id}")]
     public async Task<IActionResult> GetLotByIds(int eventId, int id)
     {
-        var query = new GetLotByIdsQuery
+        var query = new GetLotByIdsCommand()
         {
             EventId = eventId,
             Id = id

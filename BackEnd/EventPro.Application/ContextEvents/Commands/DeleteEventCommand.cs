@@ -6,5 +6,6 @@ namespace EventPro.Application.ContextEvents.Commands;
 
 public class DeleteEventCommand : IRequest<Event>
 {
-    public int Id { get; set; } 
+    public int UserId { get; set; }
+    public int Id { get; set; }
 }

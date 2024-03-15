@@ -16,7 +16,8 @@ public class DeleteEventCommandHandler : IRequestHandler<DeleteEventCommand, Eve
 
     public async Task<Event> Handle(DeleteEventCommand request, CancellationToken cancellationToken)
     {
-        var deletedEvent = await _unitOfWork.EventRepository.DeleteEvent(request.Id);
+        
+        var deletedEvent = await _unitOfWork.EventRepository.DeleteEvent(request.UserId, request.Id);
 
         if (deletedEvent is null)
         {

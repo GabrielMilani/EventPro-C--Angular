@@ -1,11 +1,13 @@
-﻿using EventPro.Application.ContextEvents.Commands;
-using EventPro.Application.ContextEvents.Queries;
+﻿using EventPro.Api.Extensions;
+using EventPro.Application.ContextEvents.Commands;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace EventPro.Api.Controllers;
 [Route("v1/events")]
 [ApiController]
+[Authorize]
 public class EventsController : ControllerBase
 {
     private readonly IMediator _mediator;
@@ -21,22 +23,44 @@ public class EventsController : ControllerBase
     [HttpGet]
     public async Task<IActionResult> GetEvent()
     {
-        var query = new GetEventsQuery();
-        var events = await _mediator.Send(query);
+        var command = new GetEventsCommand
+        {
+            UserId = User.GetUserId()
+        };
+        var events = await _mediator.Send(command);
         return Ok(events);
     }
     [HttpGet("{id}")]
     public async Task<IActionResult> GetEventById(int id)
     {
-        var query = new GetEventByIdQuery { Id = id };
-        var @event = await _mediator.Send(query);
+        var command = new GetEventByIdCommand
+        {
+            UserId = User.GetUserId(),
+            EventId = id
+        };
+        var @event = await _mediator.Send(command);
+        return @event != null ? Ok(@event) : NotFound("Event not found");
+    }
+    [HttpGet("{theme}")]
+    public async Task<IActionResult> GetEventByTheme(string theme)
+    {
+        var command = new GetEventsByThemeCommand
+        {
+            UserId = User.GetUserId(),
+            Theme = theme
+        };
+        var @event = await _mediator.Send(command);
         return @event != null ? Ok(@event) : NotFound("Event not found");
     }
 
     [HttpPost("upload-image/{eventId}")]
     public async Task<IActionResult> UploadImage(int eventId)
     {
-        var query = new GetEventByIdQuery { Id = eventId };
+        var query = new GetEventByIdCommand
+        {
+            UserId = User.GetUserId(),
+            EventId = eventId
+        };
         var eventDto = await _mediator.Send(query);
         if (eventDto == null) return NoContent();
 
@@ -46,7 +70,11 @@ public class EventsController : ControllerBase
            DeleteImage(eventDto.ImageUrl);
            eventDto.ImageUrl = await SaveImage(file);
         }
-        var command = new UploadImageEventCommand();
+        var command = new UploadImageEventCommand
+        {
+            Id = eventId,
+            EventDto = eventDto
+        };
         command.Id = eventId;
         command.EventDto = eventDto;
         var eventReturn = await _mediator.Send(command);
@@ -57,6 +85,7 @@ public class EventsController : ControllerBase
     [HttpPost]
     public async Task<IActionResult> CreateEvent(CreateEventCommand command)
     {
+        command.UserId = User.GetUserId();
         var createdEvent = await _mediator.Send(command);
         return CreatedAtAction(nameof(GetEvent), new { id = createdEvent.Id }, createdEvent);
     }
@@ -65,6 +94,7 @@ public class EventsController : ControllerBase
     public async Task<IActionResult> UpdateEvent(int id, UpdateEventCommand command)
     {
         command.Id = id;
+        command.UserId = User.GetUserId();
         var updatedEvent = await _mediator.Send(command);
         return updatedEvent != null ? Ok(updatedEvent) : NotFound("Event not found");
     }
@@ -72,7 +102,11 @@ public class EventsController : ControllerBase
     [HttpDelete("{id}")]
     public async Task<IActionResult> DeleteEvent(int id)
     {
-        var command = new DeleteEventCommand { Id = id };
+        var command = new DeleteEventCommand
+        {
+            UserId = User.GetUserId(),
+            Id = id
+        };
         var deletedEvent = await _mediator.Send(command);
         if (deletedEvent != null)
         {

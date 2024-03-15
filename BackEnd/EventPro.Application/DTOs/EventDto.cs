@@ -1,4 +1,6 @@
-﻿namespace EventPro.Application.DTOs;
+﻿using EventPro.Domain.ContextEvent.Entities.Identity;
+
+namespace EventPro.Application.DTOs;
 
 public class EventDto
 {
@@ -10,4 +12,6 @@ public class EventDto
     public string? Telephone { get; set; }
     public int? QuantityPeople { get; set; }
     public DateTime? EventDate { get; set; }
+    public int UserId { get; set; }
+    public User User { get; set; }
 }

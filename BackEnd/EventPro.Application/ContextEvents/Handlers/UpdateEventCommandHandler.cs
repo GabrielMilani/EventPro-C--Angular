@@ -20,19 +20,13 @@ public class UpdateEventCommandHandler : IRequestHandler<UpdateEventCommand, Eve
 
     public async Task<Event> Handle(UpdateEventCommand request, CancellationToken cancellationToken)
     {
-        var existingEvent = await _unitOfWork.EventRepository.GetEventById(request.Id);
+        var existingEvent = await _unitOfWork.EventRepository.GetEventById(request.UserId, request.Id);
 
         if (existingEvent == null)
         {
             throw new InvalidOperationException("Event not found");
         }
-        existingEvent.Update(request.Theme,
-                             request.Local,
-                             request.Email,
-                             request.ImageUrl,
-                             request.Telephone,
-                             request.QuantityPeople, 
-                             request.EventDate);
+        _mapper.Map(request, existingEvent);
         _unitOfWork.EventRepository.UpdateEvent(existingEvent);
         await _unitOfWork.CommitAsync();
 

@@ -21,19 +21,13 @@ public class UpdateLotCommandHandler : IRequestHandler<UpdateLotCommand, Lot>
     public async Task<Lot> Handle(UpdateLotCommand request, CancellationToken cancellationToken)
     {
         var lot = _mapper.Map<Lot>(request.Lot);
-        lot.UpdateEventId(request.EventId);
+        lot.EventId = request.EventId;
         var existingLot = await _unitOfWork.LotRepository.GetLotByIds(request.EventId, lot.Id);
         if (existingLot == null)
         {
             throw new InvalidOperationException("Lot not found");
         }
-        existingLot.Update(lot.Name,
-                           lot.Quantity,                 
-                           lot.Price,
-                           lot.InitialDate,
-                           lot.FinalDate, 
-                           lot.EventId,
-                           lot.Event);
+        _mapper.Map(request, existingLot);
         await _unitOfWork.LotRepository.UpdateLot(existingLot);
         await _unitOfWork.CommitAsync();
         return existingLot;

@@ -1,10 +1,14 @@
 ﻿using EventPro.Domain.ContextEvent.Entities;
-using EventPro.Infrastructure.Context.ContextEvent.Mappings;
+using EventPro.Domain.ContextEvent.Entities.Identity;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
 namespace EventPro.Infrastructure.Data;
 
-public class AppDbContext : DbContext
+public class AppDbContext : IdentityDbContext<User, Role, int, 
+                            IdentityUserClaim<int>, UserRole, 
+                            IdentityUserLogin<int>, IdentityRoleClaim<int>,IdentityUserToken<int>>
 {
     public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
     { }
@@ -16,10 +20,33 @@ public class AppDbContext : DbContext
 
     protected override void OnModelCreating(ModelBuilder builder)
     {
-        builder.ApplyConfiguration(new EventMap());
-        builder.ApplyConfiguration(new SpeakerMap());
-        builder.ApplyConfiguration(new LotMap());
-        builder.ApplyConfiguration(new SocialNetworkMap());
-        builder.ApplyConfiguration(new SpeakerEventMap());
+        base.OnModelCreating(builder);
+
+        builder.Entity<UserRole>(userRole =>
+        {
+            userRole.HasKey(ur => new { ur.UserId, ur.RoleId });
+            userRole.HasOne(ur => ur.Role)
+                .WithMany(r => r.UserRoles)
+                .HasForeignKey(r => r.RoleId)
+                .IsRequired();
+
+            userRole.HasOne(ur => ur.User)
+                .WithMany(r => r.UserRoles)
+                .HasForeignKey(r => r.UserId)
+                .IsRequired();
+        });
+
+        builder.Entity<SpeakerEvent>()
+            .HasKey(PE => new {PE.EventId, PE.SpeakerId});
+
+        builder.Entity<Event>()
+            .HasMany(e => e.SocialNetworks)
+            .WithOne(rs => rs.Event)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        builder.Entity<Speaker>()
+            .HasMany(e => e.SocialNetworks)
+            .WithOne(rs => rs.Speaker)
+            .OnDelete(DeleteBehavior.Cascade);
     }
 }
