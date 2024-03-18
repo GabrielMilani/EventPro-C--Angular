@@ -10,7 +10,7 @@
           type="text"
           class="form-control"
           placeholder="Search"
-          />
+          (input)="filterEvents($event.target)" />
       </div>
     </div>
     <div>
@@ -70,6 +70,22 @@
       </tr>
     </tfoot>
   </table>
+  <div class="d-flex justify-content-center">
+    <pagination
+      [boundaryLinks]="true"
+
+      [totalItems]="pagination.totalItems"
+      [itemsPerPage]="pagination.itemsPerPage"
+      [(ngModel)]="pagination.currentPage"
+      (pageChanged)="pageChanged($event)"
+
+      pageBtnClass="btn"
+      previousText="&lsaquo;"
+      nextText="&rsaquo;"
+      firstText="&laquo;"
+      blastText="&raquo;">
+    </pagination>
+  </div>
 </div>
 
 <ng-template #template>

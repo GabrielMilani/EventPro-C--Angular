@@ -109,6 +109,7 @@ public class AccountsController : ControllerBase
         if (user.Result == null) return Unauthorized("UserName invalid!");
         var command = new UpdateAccountCommand
         {
+            UserId = User.GetUserId(),
             UserUpdateDto = userUpdateDto
         };
         var returnUser = await _mediator.Send(command);

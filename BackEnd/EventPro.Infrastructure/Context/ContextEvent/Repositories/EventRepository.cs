@@ -1,5 +1,6 @@
 ﻿using EventPro.Domain.ContextEvent.Abstractions;
 using EventPro.Domain.ContextEvent.Entities;
+using EventPro.Domain.ContextShared.Models;
 using EventPro.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
@@ -40,22 +41,22 @@ public class EventRepository : IEventRepository
         return @event;
     }
 
-    public async Task<IEnumerable<Event>> GetEvents(int userId)
+    public async Task<PageList<Event>> GetEvents(int userId, PageParams pageParams, bool IncludeSpeaker = false)
     {
-        var eventList = await _context.Events
-            .Where(x => x.UserId == userId)
-            .AsNoTracking()
-            .ToListAsync();
-        return eventList ?? Enumerable.Empty<Event>();
-    }
+        IQueryable<Event> query = _context.Events
+            .Include(e => e.Lots)
+            .Include(e => e.SocialNetworks);
+        if (IncludeSpeaker)
+        {
+            query = query
+                .Include(e => e.SpeakerEvents)
+                .ThenInclude(pe => pe.Speaker);
+        }
+        query = query.AsNoTracking()
+                    .Where(x => (x.Theme.ToLower().Contains(pageParams.Term.ToLower())) && x.UserId == userId)
+                    .OrderBy(e => e.Id);
 
-    public async Task<IEnumerable<Event>> GetEventsByTheme(int userId, string theme)
-    {
-        var eventList = await _context.Events
-            .Where(x => x.UserId == userId && x.Theme.ToLower().Contains(theme.ToLower()))
-            .AsNoTracking()
-            .ToListAsync();
-        return eventList ?? Enumerable.Empty<Event>();
+        return await PageList<Event>.CreateAsync(query, pageParams.PageNumber, pageParams.pageSize);
     }
 
     public void UpdateEvent( Event @event)

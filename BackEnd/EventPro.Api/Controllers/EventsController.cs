@@ -1,5 +1,6 @@
 ﻿using EventPro.Api.Extensions;
 using EventPro.Application.ContextEvents.Commands;
+using EventPro.Domain.ContextShared.Models;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -21,13 +22,18 @@ public class EventsController : ControllerBase
     private readonly IWebHostEnvironment _webHostEnvironment;
 
     [HttpGet]
-    public async Task<IActionResult> GetEvent()
+    public async Task<IActionResult> GetEvent([FromQuery]PageParams pageParams)
     {
         var command = new GetEventsCommand
         {
-            UserId = User.GetUserId()
+            UserId = User.GetUserId(),
+            PageParams = pageParams,
+            IncludeSpeaker = false
         };
         var events = await _mediator.Send(command);
+
+        Response.AddPagination(events.CurrentPage, events.PageSize, events.TotalCount, events.TotalPages);
+
         return Ok(events);
     }
     [HttpGet("{id}")]

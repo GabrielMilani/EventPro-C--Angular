@@ -29,12 +29,12 @@ public class UpdateAccountCommandHandler : IRequestHandler<UpdateAccountCommand,
         if (user == null) return null;
 
         _mapper.Map(request.UserUpdateDto, user);
-
-         if (request.UserUpdateDto.Password != null)
-         {
+        user.Id = request.UserId;
+        if (request.UserUpdateDto.Password != null)
+        {
             var token = await _userManager.GeneratePasswordResetTokenAsync(user);
             await _userManager.ResetPasswordAsync(user, token, request.UserUpdateDto.Password);
-         }
+        }
         _unitOfWork.UserRepository.UpdateUser(user);
         await _unitOfWork.CommitAsync();
         var returnUser = await _unitOfWork.UserRepository.GetUserByUserName(request.UserUpdateDto.UserName);
