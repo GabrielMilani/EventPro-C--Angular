@@ -30,15 +30,14 @@ public class UpdateAccountCommandHandler : IRequestHandler<UpdateAccountCommand,
 
         _mapper.Map(request.UserUpdateDto, user);
 
-        var token = await _userManager.GeneratePasswordResetTokenAsync(user);
-        var result = await _userManager.ResetPasswordAsync(user, token, request.UserUpdateDto.Password);
-
+         if (request.UserUpdateDto.Password != null)
+         {
+            var token = await _userManager.GeneratePasswordResetTokenAsync(user);
+            await _userManager.ResetPasswordAsync(user, token, request.UserUpdateDto.Password);
+         }
         _unitOfWork.UserRepository.UpdateUser(user);
-        if (_unitOfWork.CommitAsync().IsCompletedSuccessfully)
-        {
-            var userReturn = await _unitOfWork.UserRepository.GetUserByUserName(user.UserName);
-            return _mapper.Map<UserUpdateDto>(userReturn);
-        }
-        return null;
+        await _unitOfWork.CommitAsync();
+        var returnUser = await _unitOfWork.UserRepository.GetUserByUserName(request.UserUpdateDto.UserName);
+        return _mapper.Map<UserUpdateDto>(returnUser);
     }
 }

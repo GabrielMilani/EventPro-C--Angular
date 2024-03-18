@@ -1,4 +1,4 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable, take } from 'rxjs';
 import { EventModel } from '../models/EventModel';
@@ -8,6 +8,7 @@ import { environment } from '../../environments/environment';
 
 export class EventService {
   baseURL = environment.apiURL+'v1/events';
+
   constructor(private http: HttpClient) { }
 
   public getEvents() : Observable<EventModel[]>
@@ -17,12 +18,12 @@ export class EventService {
     .pipe(take(1));
   }
 
-  // public getEventsByTheme(theme: string) : Observable<EventModel[]>
-  //{
-   // return this.http
-  //  .get<EventModel[]>(`${this.baseURL}/${theme}/theme`)
-   // .pipe(take(1));
-  //}
+   public getEventsByTheme(theme: string) : Observable<EventModel[]>
+  {
+    return this.http
+    .get<EventModel[]>(`${this.baseURL}/${theme}/theme`)
+    .pipe(take(1));
+  }
 
   public getEventById(id: number) : Observable<EventModel>
   {

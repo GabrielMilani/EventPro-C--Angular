@@ -15,32 +15,40 @@ import { ProfileComponent } from './components/user/profile/profile.component';
 
 
 import { ContactsComponent } from './components/contacts/contacts.component';
-const routes: Routes =
-[
+import { AuthGuard } from './guard/auth.guard';
+import { HomeComponent } from './components/home/home.component';
+
+const routes: Routes = [
+  { path: '', redirectTo: 'home', pathMatch: 'full' },
+  {
+    path: '',
+    runGuardsAndResolvers: 'always',
+    canActivate: [AuthGuard],
+    children: [
+      { path: 'user', redirectTo: 'user/profile' },
+      { path: 'user/profile', component: ProfileComponent },
+      { path: 'events', redirectTo: 'events/list' },
+      { path: 'events', component: EventComponent,
+        children:[
+          { path: 'detail/:id', component: EventDetailComponent },
+          { path: 'detail', component: EventDetailComponent },
+          { path: 'list', component: EventListComponent },
+        ]
+      },
+      { path: 'dashboard', component: DashboardComponent },
+      { path: 'speakers', component: SpeakerComponent },
+      { path: 'contacts', component: ContactsComponent },
+    ]
+  },
   {
     path: 'user', component: UserComponent,
-    children:
-    [
+    children:[
       { path: 'login', component: LoginComponent },
       { path: 'registration', component: RegistrationComponent },
     ]
   },
-  { path: 'user/profile', component: ProfileComponent },
-  { path: 'events', redirectTo: 'events/list' },
-  {
-    path: 'events', component: EventComponent,
-    children:
-    [
-      { path: 'detail/:id', component: EventDetailComponent },
-      { path: 'detail', component: EventDetailComponent },
-      { path: 'list', component: EventListComponent },
-    ]
-  },
-  { path: 'dashboard', component: DashboardComponent},
-  { path: 'speakers', component: SpeakerComponent },
-  { path: 'contacts', component: ContactsComponent },
-  { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
-  { path: '**', redirectTo: 'dashboard', pathMatch: 'full' },
+  { path: 'home', component: HomeComponent },
+  { path: '**', redirectTo: 'home', pathMatch: 'full' },
 ];
 
 @NgModule({

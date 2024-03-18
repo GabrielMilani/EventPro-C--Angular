@@ -5,6 +5,7 @@ using EventPro.Application.DTOs;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json.Linq;
 
 namespace EventPro.Api.Controllers;
 
@@ -33,15 +34,33 @@ public class AccountsController : ControllerBase
 
     [HttpPost("register")]
     [AllowAnonymous]
-    public async Task<IActionResult> Register(CreateAccountCommand command)
+    public async Task<IActionResult> Register(UserDto userDto)
     {
-        var userExists = new UserExistsCommand();
-        userExists.UserName = command.UserDto.UserName;
+        var userExists = new UserExistsCommand
+        {
+          UserName = userDto.UserName
+        };
         if (await _mediator.Send(userExists))
             return BadRequest("User already exists!");
+        var command = new CreateAccountCommand
+        {
+            UserDto = userDto
+        };
         var user = await _mediator.Send(command);
         if (user != null)
-            return Ok(user);
+        {
+            var tokenCommand = new GenerateTokenCommand()
+            {
+                UserUpdateDto = user
+            };
+            var token = await _mediator.Send(tokenCommand);
+            return Ok(new
+            {
+                userName = user.UserName,
+                firstName = user.FirstName,
+                token = token
+            });
+        }
         return BadRequest("Unregistered user!");
     }
 
@@ -71,21 +90,38 @@ public class AccountsController : ControllerBase
         return Ok(new
         {
             userName = user.Result.UserName,
-            FirstName = user.Result.FirstName,
+            firstName = user.Result.FirstName,
             token = token
         });
     }
 
     [HttpPut("update")]
-    public async Task<IActionResult> Update(UpdateAccountCommand command)
+    public async Task<IActionResult> Update(UserUpdateDto userUpdateDto)
     {
+        if (userUpdateDto.UserName != User.GetUserName())
+            return Unauthorized("User invalid!");
+
         var getUserCommand = new GetUserByUserNameCommand()
         {
             UserName = User.GetUserName()
         };
         var user = _mediator.Send(getUserCommand);
         if (user.Result == null) return Unauthorized("UserName invalid!");
+        var command = new UpdateAccountCommand
+        {
+            UserUpdateDto = userUpdateDto
+        };
         var returnUser = await _mediator.Send(command);
-        return Ok(returnUser);
+        var tokenCommand = new GenerateTokenCommand()
+        {
+            UserUpdateDto = returnUser
+        };
+        var token = await _mediator.Send(tokenCommand);
+        return Ok(new
+        {
+            userName = returnUser.UserName,
+            firstName = returnUser.FirstName,
+            token = token
+        });
     }
 }

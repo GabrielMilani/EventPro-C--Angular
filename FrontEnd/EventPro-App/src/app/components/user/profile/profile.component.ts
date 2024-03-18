@@ -1,6 +1,11 @@
+import { AccountService } from './../../../services/account.service';
 import { Component } from '@angular/core';
 import { AbstractControlOptions, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ValidatorField } from '../../../helpers/ValidatorField';
+import { Router } from '@angular/router';
+import { ToastrService } from 'ngx-toastr';
+import { NgxSpinnerService } from 'ngx-spinner';
+import { UserUpdate } from '../../../models/identity/UserUpdate';
 
 @Component({
   selector: 'app-profile',
@@ -8,40 +13,81 @@ import { ValidatorField } from '../../../helpers/ValidatorField';
   styleUrl: './profile.component.scss'
 })
 export class ProfileComponent {
-
+  userUpdate = {} as UserUpdate;
   form!: FormGroup;
 
-  public get f(): any
-  {
-  return this.form.controls;
-  }
-
-  constructor(public fb: FormBuilder) { }
+  constructor(private fb: FormBuilder,
+              public accountService: AccountService,
+              private router: Router,
+              private toaster: ToastrService,
+              private spinner: NgxSpinnerService) { }
 
   ngOnInit(): void {
     this.validation();
+    this.loadUser();
   }
 
-  private validation(): void
-  {
+  private loadUser(): void{
+    this.spinner.show();
+    this.accountService
+    .getUser()
+    .subscribe(
+      (userReturn: UserUpdate) => {
+        this.userUpdate = userReturn;
+        this.form.patchValue(this.userUpdate);
+        this.toaster.success('User loaded success.', 'Success!');
+      },
+      (error: any) => {
+        console.error(error);
+        this.toaster.error('User loaded error.', 'Error!');
+        //this.router.navigate(['/dashboard']);
+      }
+    ).add(() => this.spinner.hide())
+  }
+
+  private validation(): void{
     const formOptions: AbstractControlOptions = {
       validators: ValidatorField.MustMatch('password', 'passwordConfirmation')
-    }
+    };
     this.form = this.fb.group({
-      title: ['', Validators.required],
+      userName: [''],
+      title: ['NaoInformado', Validators.required],
       firstName: ['', Validators.required],
       lastName: ['', Validators.required],
       email: ['', [Validators.required, Validators.email]],
-      telephone: ['', Validators.required],
-      hole: ['', Validators.required],
+      phoneNumber: ['', Validators.required],
       description: ['', Validators.required],
-      password: ['', [Validators.required, Validators.minLength(6)]],
-      passwordConfirmation: ['', Validators.required],
+      function: ['NaoInformado', Validators.required],
+      password: ['', [Validators.minLength(4), Validators.nullValidator]],
+      passwordConfirmation: ['', Validators.nullValidator],
     },formOptions);
   }
 
-  public resetForm(): void
-  {
+  public get f(): any{
+    return this.form.controls;
+  }
+
+  public onSubmit(): void{
+    this.updatedUser();
+  }
+
+  public updatedUser(): void{
+    this.userUpdate = {...this.form.value }
+    this.spinner.show();
+    this.accountService
+    .updateUser(this.userUpdate)
+    .subscribe(
+      () => {
+        this.toaster.success('User updated success', 'Success!');
+      },
+      (error: any) => {
+        console.error(error);
+        this.toaster.error('User updated error', 'Error!');
+      },
+    ).add(() => this.spinner.hide())
+  }
+
+  public resetForm(): void{
     this.form.reset();
   }
 }

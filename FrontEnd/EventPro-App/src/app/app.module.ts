@@ -1,6 +1,6 @@
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { BrowserModule } from '@angular/platform-browser';
-import { HttpClientModule }from'@angular/common/http';
+import { HTTP_INTERCEPTORS, HttpClientModule }from'@angular/common/http';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { CUSTOM_ELEMENTS_SCHEMA, NgModule } from '@angular/core';
 
@@ -23,12 +23,14 @@ import { NgxSpinnerModule } from 'ngx-spinner';
 
 import { LotService } from './services/lot.service';
 import { EventService } from './services/event.service';
+import { AccountService } from './services/account.service';
 
 import { DateTimeFormatPipe } from './helpers/DateTimeFormat.pipe';
 
 import { NavComponent } from './shared/nav/nav.component';
 import { SharedTitleComponent } from './shared/shared-title/shared-title.component';
 
+import { HomeComponent } from './components/home/home.component';
 import { EventComponent } from './components/event/event.component';
 import { SpeakerComponent } from './components/speaker/speaker.component';
 import { ContactsComponent } from './components/contacts/contacts.component';
@@ -39,6 +41,9 @@ import { EventListComponent } from './components/event/event-list/event-list.com
 import { UserComponent } from './components/user/user.component';
 import { LoginComponent } from './components/user/login/login.component';
 import { RegistrationComponent } from './components/user/registration/registration.component';
+
+import { JwtInterceptor } from './interceptors/jwt.interceptor';
+import { AuthGuard } from './guard/auth.guard';
 
 defineLocale('pt-br', ptBrLocale);
 
@@ -52,6 +57,7 @@ defineLocale('pt-br', ptBrLocale);
     ProfileComponent,
     SharedTitleComponent,
     NavComponent,
+    HomeComponent,
     DateTimeFormatPipe,
     EventDetailComponent,
     EventListComponent,
@@ -79,8 +85,13 @@ defineLocale('pt-br', ptBrLocale);
     NgxSpinnerModule,
     NgxCurrencyDirective
   ],
-  providers: [EventService, LotService],
+  providers: [
+    EventService,
+    LotService,
+    AccountService,
+    AuthGuard,
+    { provide: HTTP_INTERCEPTORS, useClass: JwtInterceptor, multi: true}
+  ],
   bootstrap: [AppComponent],
-  schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })
 export class AppModule { }

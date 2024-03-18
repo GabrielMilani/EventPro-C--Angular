@@ -41,18 +41,6 @@ public class EventsController : ControllerBase
         var @event = await _mediator.Send(command);
         return @event != null ? Ok(@event) : NotFound("Event not found");
     }
-    [HttpGet("{theme}")]
-    public async Task<IActionResult> GetEventByTheme(string theme)
-    {
-        var command = new GetEventsByThemeCommand
-        {
-            UserId = User.GetUserId(),
-            Theme = theme
-        };
-        var @event = await _mediator.Send(command);
-        return @event != null ? Ok(@event) : NotFound("Event not found");
-    }
-
     [HttpPost("upload-image/{eventId}")]
     public async Task<IActionResult> UploadImage(int eventId)
     {

@@ -3,7 +3,7 @@ using MediatR;
 
 namespace EventPro.Application.ContextEvents.Commands;
 
-public class CreateAccountCommand : IRequest<UserDto>
+public class CreateAccountCommand : IRequest<UserUpdateDto>
 {
     public UserDto UserDto { get; set; }
 }
