@@ -1,5 +1,6 @@
 using System.Text;
 using System.Text.Json.Serialization;
+using EventPro.Api.Helpers;
 using EventPro.Application;
 using EventPro.CrossCutting.AppDependencies;
 using EventPro.Domain.ContextEvent.Entities.Identity;
@@ -47,6 +48,8 @@ builder.Services.AddControllers()
         options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter()))
     .AddNewtonsoftJson(options =>
         options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore);
+builder.Services.AddScoped<IUtils, Utils>();
+
 builder.Services.AddCors();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(options =>

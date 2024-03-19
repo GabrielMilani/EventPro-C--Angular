@@ -1,4 +1,5 @@
 ﻿using EventPro.Api.Extensions;
+using EventPro.Api.Helpers;
 using EventPro.Application.ContextEvents.Commands;
 using EventPro.Domain.ContextShared.Models;
 using MediatR;
@@ -12,14 +13,13 @@ namespace EventPro.Api.Controllers;
 public class EventsController : ControllerBase
 {
     private readonly IMediator _mediator;
-
-    public EventsController(IMediator mediator, IWebHostEnvironment webHostEnvironment)
+    private readonly IUtils _utils;
+    private readonly string _destination = "images";
+    public EventsController(IMediator mediator, IUtils utils)
     {
         _mediator = mediator;
-        _webHostEnvironment = webHostEnvironment;
+        _utils = utils;
     }
-
-    private readonly IWebHostEnvironment _webHostEnvironment;
 
     [HttpGet]
     public async Task<IActionResult> GetEvent([FromQuery]PageParams pageParams)
@@ -61,8 +61,8 @@ public class EventsController : ControllerBase
         var file = Request.Form.Files[0];
         if (file.Length > 0)
         {
-           DeleteImage(eventDto.ImageUrl);
-           eventDto.ImageUrl = await SaveImage(file);
+            _utils.DeleteImage(eventDto.ImageUrl, _destination);
+           eventDto.ImageUrl = await _utils.SaveImage(file, _destination);
         }
         var command = new UploadImageEventCommand
         {
@@ -104,33 +104,11 @@ public class EventsController : ControllerBase
         var deletedEvent = await _mediator.Send(command);
         if (deletedEvent != null)
         {
-           DeleteImage(deletedEvent.ImageUrl);
+           _utils.DeleteImage(deletedEvent.ImageUrl, _destination);
            return Ok(deletedEvent);
 
         }
         else 
             return NotFound("Event not found");
-    }
-
-    [NonAction]
-    public async Task<string> SaveImage(IFormFile imageFile)
-    {
-        string imageName = new String(Path.GetFileNameWithoutExtension(imageFile.FileName)
-                                        .Take(10).ToArray()).Replace(' ','-');
-        imageName = $"{imageName}{DateTime.UtcNow.ToString("yymmssfff")}{Path.GetExtension(imageFile.FileName)}";
-        var imagePath = Path.Combine(_webHostEnvironment.ContentRootPath, @"Resources/images", imageName);
-        using (var fileStream = new FileStream(imagePath, FileMode.Create))
-        {
-            await imageFile.CopyToAsync(fileStream);
-        } ;
-        return imageName;
-    }
-
-    [NonAction]
-    public void DeleteImage(string imageName)
-    {
-        var imagePath = Path.Combine(_webHostEnvironment.ContentRootPath, @"Resources/images", imageName);
-        if (System.IO.File.Exists(imagePath))
-            System.IO.File.Delete(imagePath);
     }
 }

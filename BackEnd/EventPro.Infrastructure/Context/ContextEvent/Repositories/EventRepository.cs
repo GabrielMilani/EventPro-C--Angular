@@ -34,8 +34,10 @@ public class EventRepository : IEventRepository
     public async Task<Event> GetEventById(int userId, int eventId)
     {
         var @event = await _context.Events
-            .AsNoTracking()
-            .FirstOrDefaultAsync(x => x.UserId == userId && x.Id == eventId);
+                .AsNoTracking()
+                .Include(e => e.Lots)
+                .Include(e => e.SocialNetworks)
+                .FirstOrDefaultAsync(x => x.UserId == userId && x.Id == eventId);
         if (@event is null)
             throw new InvalidOperationException("Event not found");
         return @event;
@@ -53,8 +55,10 @@ public class EventRepository : IEventRepository
                 .ThenInclude(pe => pe.Speaker);
         }
         query = query.AsNoTracking()
-                    .Where(x => (x.Theme.ToLower().Contains(pageParams.Term.ToLower())) && x.UserId == userId)
-                    .OrderBy(e => e.Id);
+            .Where(e => (e.Theme.ToLower().Contains(pageParams.Term.ToLower()) ||
+                         e.Local.ToLower().Contains(pageParams.Term.ToLower())) &&
+                         e.UserId == userId)
+            .OrderBy(e => e.Id);
 
         return await PageList<Event>.CreateAsync(query, pageParams.PageNumber, pageParams.pageSize);
     }

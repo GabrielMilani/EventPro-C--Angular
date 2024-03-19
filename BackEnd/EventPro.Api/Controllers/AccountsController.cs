@@ -1,5 +1,6 @@
 ﻿using System.Security.Claims;
 using EventPro.Api.Extensions;
+using EventPro.Api.Helpers;
 using EventPro.Application.ContextEvents.Commands;
 using EventPro.Application.DTOs;
 using MediatR;
@@ -15,10 +16,13 @@ namespace EventPro.Api.Controllers;
 public class AccountsController : ControllerBase
 {
     private readonly IMediator _mediator;
+    private readonly IUtils _utils;
+    private readonly string _destination = "profile";
 
-    public AccountsController(IMediator mediator)
+    public AccountsController(IMediator mediator, IUtils utils)
     {
         _mediator = mediator;
+        _utils = utils;
     }
 
     [HttpGet("user")]
@@ -124,5 +128,31 @@ public class AccountsController : ControllerBase
             firstName = returnUser.FirstName,
             token = token
         });
+    }
+    
+    [HttpPost("upload-image")]
+    public async Task<IActionResult> UploadImage()
+    {
+        var query = new GetUserByUserNameCommand
+        {
+            UserName = User.GetUserName(),
+        };
+        var userDto = await _mediator.Send(query);
+        if (userDto == null) return NoContent();
+
+        var file = Request.Form.Files[0];
+        if (file.Length > 0)
+        {
+            _utils.DeleteImage(userDto.ImageUrl, _destination);
+            userDto.ImageUrl = await _utils.SaveImage(file, _destination);
+        }
+        var command = new UpdateAccountCommand
+        {
+            UserId = User.GetUserId(),
+            UserUpdateDto = userDto
+        }; ;
+        var userReturn = await _mediator.Send(command);
+
+        return Ok(userReturn);
     }
 }

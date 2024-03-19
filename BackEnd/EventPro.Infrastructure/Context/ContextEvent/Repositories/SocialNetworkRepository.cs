@@ -12,25 +12,12 @@ public class SocialNetworkRepository : ISocialNetworkRepository
     public SocialNetworkRepository(AppDbContext context)
         => _context = context;
 
-    public async Task<IEnumerable<SocialNetwork>> GetSocialNetworks()
-    {
-        var socialNetworkList = await _context.SocialNetworks.ToListAsync();
-        return socialNetworkList ?? Enumerable.Empty<SocialNetwork>();
-    }
-
-    public async Task<SocialNetwork> GetSocialNetworkById(int socialNetworkId)
-    {
-        var socialNetwork = await _context.SocialNetworks.FindAsync(socialNetworkId);
-        if (socialNetwork is null)
-            throw new InvalidOperationException("SocialNetwork not found");
-        return socialNetwork;
-    }
-
     public async Task<SocialNetwork> AddSocialNetwork(SocialNetwork socialNetwork)
     {
         if (socialNetwork is null)
             throw new ArgumentNullException(nameof(socialNetwork));
         await _context.SocialNetworks.AddAsync(socialNetwork);
+
         return socialNetwork;
     }
 
@@ -41,12 +28,64 @@ public class SocialNetworkRepository : ISocialNetworkRepository
         _context.SocialNetworks.Update(socialNetwork);
     }
 
-    public async Task<SocialNetwork> DeleteSocialNetwork(int socialNetworkId)
+    public async Task<bool> DeleteSocialNetworkSpeakerId(int speakerId, int id)
     {
-        var socialNetwork = await GetSocialNetworkById(socialNetworkId);
+        var socialNetwork = await GetSocialNetworkSpeakerByIds(speakerId, id);
         if (socialNetwork is null)
             throw new InvalidOperationException("SocialNetwork not found");
         _context.SocialNetworks.Remove(socialNetwork);
-        return socialNetwork;
+        return true;
     }
+    public async Task<bool> DeleteSocialNetworkEventId(int eventId, int id)
+    {
+        var socialNetwork = await GetSocialNetworkEventByIds(eventId, id);
+        if (socialNetwork is null)
+            throw new InvalidOperationException("SocialNetwork not found");
+        _context.SocialNetworks.Remove(socialNetwork);
+        return true;
+    }
+
+
+    public async Task<SocialNetwork> GetSocialNetworkEventByIds(int eventId, int id)
+    {
+        IQueryable<SocialNetwork> query = _context.SocialNetworks;
+
+        query = query.AsNoTracking()
+            .Where(sn => sn.EventId == eventId &&
+                         sn.Id == id);
+
+        return await query.FirstOrDefaultAsync();
+    }
+
+    public async Task<SocialNetwork> GetSocialNetworkSpeakerByIds(int speakerId, int id)
+    {
+        IQueryable<SocialNetwork> query = _context.SocialNetworks;
+
+        query = query.AsNoTracking()
+            .Where(sn => sn.SpeakerId == speakerId &&
+                         sn.Id == id);
+
+        return await query.FirstOrDefaultAsync();
+    }
+
+    public async Task<SocialNetwork[]> GetSocialNetworksByEventId(int eventId)
+    {
+        IQueryable<SocialNetwork> query = _context.SocialNetworks;
+
+        query = query.AsNoTracking()
+            .Where(sn => sn.EventId == eventId);
+
+        return await query.ToArrayAsync();
+    }
+
+    public async Task<SocialNetwork[]> GetSocialNetworksBySpeakerId(int speakerId)
+    {
+        IQueryable<SocialNetwork> query = _context.SocialNetworks;
+
+        query = query.AsNoTracking()
+            .Where(sn => sn.SpeakerId == speakerId);
+
+        return await query.ToArrayAsync();
+    }
+
 }

@@ -16,6 +16,10 @@ public class ProfileHelper : Profile
         CreateMap<Lot, LotDto>().ReverseMap();
         CreateMap<LotDto, CreateLotCommand>().ReverseMap();
         CreateMap<LotDto, UpdateLotCommand>().ReverseMap();
+        CreateMap<Speaker, SpeakerDto>().ReverseMap();
+        CreateMap<Speaker, SpeakerAddDto>().ReverseMap();
+        CreateMap<Speaker, SpeakerUpdateDto>().ReverseMap();
+        CreateMap<SocialNetwork, SocialNetworkDto>().ReverseMap();
         CreateMap<User, UserUpdateDto>().ReverseMap();
         CreateMap<User, UserDto>().ReverseMap();
         CreateMap<User, UserLoginDto>().ReverseMap();

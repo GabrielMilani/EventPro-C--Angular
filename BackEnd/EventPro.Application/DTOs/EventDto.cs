@@ -1,4 +1,5 @@
-﻿using EventPro.Domain.ContextEvent.Entities.Identity;
+﻿using EventPro.Domain.ContextEvent.Entities;
+using EventPro.Domain.ContextEvent.Entities.Identity;
 
 namespace EventPro.Application.DTOs;
 
@@ -14,4 +15,7 @@ public class EventDto
     public DateTime? EventDate { get; set; }
     public int UserId { get; set; }
     public User User { get; set; }
+    public List<Lot> Lots{ get;  set; }
+    public List<SocialNetwork> SocialNetworks { get;  set; }
+    public List<SpeakerEvent> SpeakerEvents { get;  set; }
 }
