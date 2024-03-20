@@ -44,8 +44,10 @@ public class SpeakersController : ControllerBase
             UserId = User.GetUserId(),
             IncludeEvents = false
         };
-        var @event = await _mediator.Send(command);
-        return @event != null ? Ok(@event) : NotFound("Speaker not found");
+        var speaker = await _mediator.Send(command);
+        if (speaker == null) return NoContent();
+
+        return Ok(speaker);
     }
 
     [HttpPost]

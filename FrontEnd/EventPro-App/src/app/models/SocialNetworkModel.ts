@@ -5,8 +5,6 @@ export interface SocialNetworkModel{
   id: number;
   name: string;
   url: string;
-  eventId?: number;
-  event: EventModel;
-  speakerId?: number;
-  speaker: SpeakerModel;
+  eventId: number;
+  speakerId: number;
 }

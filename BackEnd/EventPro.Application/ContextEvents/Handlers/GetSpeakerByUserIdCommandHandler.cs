@@ -19,8 +19,7 @@ public class GetSpeakerByUserIdCommandHandler : IRequestHandler<GetSpeakerByUser
 
     public async Task<SpeakerDto> Handle(GetSpeakerByUserIdCommand request, CancellationToken cancellationToken)
     {
-        var speaker = await _unitOfWork.SpeakerRepository.GetSpeakerByUserId(request.UserId, false);
-        if (speaker == null) return null;
+        var speaker = await _unitOfWork.SpeakerRepository.GetSpeakerByUserId(request.UserId, request.IncludeEvents);
 
         return _mapper.Map<SpeakerDto>(speaker);
     }

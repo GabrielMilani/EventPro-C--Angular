@@ -1,11 +1,9 @@
-import { AccountService } from './../../../services/account.service';
 import { Component } from '@angular/core';
-import { AbstractControlOptions, FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { ValidatorField } from '../../../helpers/ValidatorField';
-import { Router } from '@angular/router';
-import { ToastrService } from 'ngx-toastr';
-import { NgxSpinnerService } from 'ngx-spinner';
 import { UserUpdate } from '../../../models/identity/UserUpdate';
+import { NgxSpinnerService } from 'ngx-spinner';
+import { ToastrService } from 'ngx-toastr';
+import { AccountService } from '../../../services/account.service';
+import { environment } from '../../../../environments/environment';
 
 @Component({
   selector: 'app-profile',
@@ -13,81 +11,50 @@ import { UserUpdate } from '../../../models/identity/UserUpdate';
   styleUrl: './profile.component.scss'
 })
 export class ProfileComponent {
-  userUpdate = {} as UserUpdate;
-  form!: FormGroup;
+  public user = {} as UserUpdate;
+  public file: File;
+  public imageURL = '';
 
-  constructor(private fb: FormBuilder,
-              public accountService: AccountService,
-              private router: Router,
-              private toaster: ToastrService,
-              private spinner: NgxSpinnerService) { }
+  public get isSpeaker(): boolean{
+    return this.user.function === 'Palestrante';
+ }
+
+  constructor(public accountService: AccountService,
+              private spinner: NgxSpinnerService,
+              private toaster: ToastrService) { }
 
   ngOnInit(): void {
-    this.validation();
-    this.loadUser();
+
   }
 
-  private loadUser(): void{
+  public onFileChange(ev: any): void{
+    const reader = new FileReader();
+
+    reader.onload = (event: any) => this.imageURL = event.target.result;
+
+    this.file = ev.target.files;
+    reader.readAsDataURL(this.file[0]);
+    this.uploadImage();
+  }
+
+  private uploadImage(): void{
     this.spinner.show();
     this.accountService
-    .getUser()
-    .subscribe(
-      (userReturn: UserUpdate) => {
-        this.userUpdate = userReturn;
-        this.form.patchValue(this.userUpdate);
-        this.toaster.success('User loaded success.', 'Success!');
-      },
+    .postUpload(this.file).subscribe(
+      () => {this.toaster.success('Image changed success.', 'Success!')},
       (error: any) => {
         console.error(error);
-        this.toaster.error('User loaded error.', 'Error!');
-        //this.router.navigate(['/dashboard']);
+        this.toaster.error('Image changed error.', 'Error!')
       }
     ).add(() => this.spinner.hide())
   }
 
-  private validation(): void{
-    const formOptions: AbstractControlOptions = {
-      validators: ValidatorField.MustMatch('password', 'passwordConfirmation')
-    };
-    this.form = this.fb.group({
-      userName: [''],
-      title: ['NaoInformado', Validators.required],
-      firstName: ['', Validators.required],
-      lastName: ['', Validators.required],
-      email: ['', [Validators.required, Validators.email]],
-      phoneNumber: ['', Validators.required],
-      description: ['', Validators.required],
-      function: ['NaoInformado', Validators.required],
-      password: ['', [Validators.minLength(4), Validators.nullValidator]],
-      passwordConfirmation: ['', Validators.nullValidator],
-    },formOptions);
+  public setFormValue(user: UserUpdate): void{
+    this.user = user;
+    if(this.user.imageUrl)
+      this.imageURL = environment.apiURL+ `resources/profile/` + this.user.imageUrl;
+    else
+      this.imageURL = './assets/img/img-profile-empty.jpg';
   }
 
-  public get f(): any{
-    return this.form.controls;
-  }
-
-  public onSubmit(): void{
-    this.updatedUser();
-  }
-
-  public updatedUser(): void{
-    this.userUpdate = {...this.form.value }
-    this.spinner.show();
-    this.accountService
-    .updateUser(this.userUpdate)
-    .subscribe(
-      () => {
-        this.toaster.success('User updated success', 'Success!');
-      },
-      (error: any) => {
-        console.error(error);
-        this.toaster.error('User updated error', 'Error!');
-      },
-    ).add(() => this.spinner.hide())
-  }
-
-  public resetForm(): void{
-    this.form.reset();
-  }
 }

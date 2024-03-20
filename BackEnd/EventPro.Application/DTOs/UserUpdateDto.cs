@@ -11,7 +11,7 @@ public class UserUpdateDto
     public string PhoneNumber { get; set; }
     public string Function { get; set; }
     public string Description { get; set; }
-    public string ImageUrl { get; set; }
+    public string? ImageUrl { get; set; }
     public string? Password { get; set; }
     public string? Token { get; set; }
 }

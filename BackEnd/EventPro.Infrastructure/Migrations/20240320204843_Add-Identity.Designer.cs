@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace EventPro.Infrastructure.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20240318195252_Add-Identity")]
+    [Migration("20240320204843_Add-Identity")]
     partial class AddIdentity
     {
         /// <inheritdoc />

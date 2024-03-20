@@ -150,7 +150,7 @@ public class AccountsController : ControllerBase
         {
             UserId = User.GetUserId(),
             UserUpdateDto = userDto
-        }; ;
+        };
         var userReturn = await _mediator.Send(command);
 
         return Ok(userReturn);

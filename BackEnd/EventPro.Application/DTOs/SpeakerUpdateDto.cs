@@ -5,8 +5,7 @@ namespace EventPro.Application.DTOs;
 
 public class SpeakerUpdateDto
 {
-    public int? Id { get; set; }
+    public int Id { get; set; }
     public string MiniCV { get; set; }
-    public int UserId { get; set; }
-    public User User { get; set; }
+    public int? UserId { get; set; }
 }

@@ -1,0 +1,9 @@
+<form [formGroup]="form">
+  <div class="form-group">
+    <h3 class="border-bottom">Mini CV</h3>
+    <textarea type="text" formControlName="miniCV" class="form-control"
+    [ngClass]="{'is-invalid': f.miniCV.errors && f.miniCV.touched }"></textarea>
+    <small class="form-text"
+    [ngClass]="colorDescription">{{formState}}</small>
+  </div>
+</form>

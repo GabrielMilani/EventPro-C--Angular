@@ -1,13 +1,11 @@
 import { EventModel } from "./EventModel";
 import { SocialNetworkModel } from "./SocialNetworkModel";
+import { UserUpdate } from "./identity/UserUpdate";
 
 export interface SpeakerModel{
   id: number;
-  name: string;
   miniCV: string;
-  imageUrl: string;
-  telephone: string;
-  email: string;
+  user: UserUpdate;
   socialNetworks: SocialNetworkModel[];
   speakerEvents: EventModel[];
 }

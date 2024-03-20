@@ -5,7 +5,7 @@ namespace EventPro.Application.DTOs;
 
 public class SpeakerAddDto
 {
-    public int? Id { get; set; }
-    public string MiniCV { get; set; }
-    public int UserId { get; set; }
+    public int? Id { get; set; } = 0;
+    public string MiniCV { get; set; }  = string.Empty;
+    public int? UserId { get; set; } = 0;
 }

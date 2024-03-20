@@ -23,8 +23,11 @@ public class UpdateSpeakerCommandHandler : IRequestHandler<UpdateSpeakerCommand,
         var speaker = await _unitOfWork.SpeakerRepository.GetSpeakerByUserId(request.UserId, false);
         if (speaker == null) return null;
 
+         request.SpeakerUpdateDto.UserId = speaker.UserId;
+         request.SpeakerUpdateDto.Id = speaker.Id; 
+
         _mapper.Map(request.SpeakerUpdateDto, speaker);
-        speaker.UserId = request.UserId;
+        
 
         _unitOfWork.SpeakerRepository.UpdateSpeaker(speaker);
         await _unitOfWork.CommitAsync();

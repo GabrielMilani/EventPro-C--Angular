@@ -1,4 +1,5 @@
 export class UserUpdate {
+  id: number;
   title: string;
   userName: string;
   firstName: string;
@@ -7,6 +8,8 @@ export class UserUpdate {
   phoneNumber: string;
   function: string;
   description: string;
+  imageUrl: string
   password: string;
   token: string;
 }
+

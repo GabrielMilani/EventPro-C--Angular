@@ -1,0 +1,48 @@
+<div class="card rounded shadow-sm p-3">
+
+  <div class="d-flex">
+    <div class="flex-fill">
+      <div class="input-group mb-2">
+        <div class="input-group-prepend">
+          <div class="input-group-text">Filter:</div>
+        </div>
+        <input
+          type="text"
+          class="form-control"
+          placeholder="Search"
+          (input)="filterSpeakers($event.target)"/>
+      </div>
+    </div>
+  </div>
+    <div *ngIf="speakersModel && speakersModel.length " class="row mt-2">
+      <div class="col-md-4 mb-4 d-flex align-items-stretch" *ngFor="let speaker of speakersModel">
+
+        <div class="card">
+        <div class="d-flex align-self-center pt-3">
+          <img width="120" height="120" class="rounded-circle"
+          [src]="getImageUrl(speaker.user.imageUrl)"/>
+        </div>
+        <div class="card-body">
+          <div class="h4 text-center mb-3">{{speaker.user.userName}}</div>
+          <div class="h7 text-bold pb-1"><b>Name:</b> {{speaker.user.firstName +' '+ speaker.user.lastName}} </div>
+          <div class="h7"> {{speaker.miniCV}}</div>
+        </div>
+        <ul class="list-group list-group-flush">
+          <li class="list-group-item">
+            <div class="row">
+              <div class="col-6 text-center border-right">
+                <div class="h5">0</div>
+                <div class="h6 text-muted">Events Taught</div>
+              </div>
+              <div class="col-6 text-center">
+                <div class="h5">0</div>
+                <div class="h6 text-muted">Speaker Events</div>
+              </div>
+            </div>
+          </li>
+        </ul>
+      </div>
+
+      </div>
+    </div>
+  </div>
